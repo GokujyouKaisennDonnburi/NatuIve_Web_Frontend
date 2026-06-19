@@ -11,6 +11,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "biome check src .vscode README.md package.json components.json next.config.ts tsconfig.json next-env.d.ts",
+    "lint:fix": "biome check src .vscode README.md package.json components.json next.config.ts tsconfig.json next-env.d.ts --write",
     "format": "biome format --write src .vscode README.md package.json components.json next.config.ts tsconfig.json next-env.d.ts",
     "format:check": "biome format src .vscode README.md package.json components.json next.config.ts tsconfig.json next-env.d.ts",
     "check": "biome check src .vscode README.md package.json components.json next.config.ts tsconfig.json next-env.d.ts && tsc --noEmit",

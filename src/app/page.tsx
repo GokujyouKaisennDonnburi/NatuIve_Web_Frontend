@@ -1,3 +1,5 @@
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { Badge } from "@/components/atoms/Badge";
 import { Loading } from "@/components/atoms/Loading";
 import { Header } from "@/components/organisms/Header";
@@ -13,8 +15,6 @@ import {
 } from "@/components/ui/card";
 import { APP_DESCRIPTION, APP_NAME } from "@/constants/config";
 import { ROUTES } from "@/constants/routes";
-import { ChevronRight } from "lucide-react";
-import Link from "next/link";
 
 export default function HomePage() {
   return (

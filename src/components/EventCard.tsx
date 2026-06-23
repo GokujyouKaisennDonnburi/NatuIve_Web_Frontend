@@ -20,9 +20,14 @@ type EventCardProps = {
 
 export function EventCard({ event }: EventCardProps) {
   const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => { setIsMounted(true); }, []);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   // ローディングの高さも実際のカードの高さに合わせて調整
-  if (!isMounted) return <div className="w-full h-[76px] bg-slate-100 rounded-lg animate-pulse" />;
+  if (!isMounted)
+    return (
+      <div className="w-full h-[76px] bg-slate-100 rounded-lg animate-pulse" />
+    );
 
   const start = new Date(event.startAt);
   const formattedDate = start.toLocaleDateString("ja-JP", {
@@ -36,15 +41,19 @@ export function EventCard({ event }: EventCardProps) {
     timeZone: "Asia/Tokyo",
   });
 
+  const posted = new Date(event.postedAt);
+  const formattedPostedAt = `${posted.getMonth() + 1}/${posted.getDate()} ${String(
+    posted.getHours(),
+  ).padStart(2, "0")}:${String(posted.getMinutes()).padStart(2, "0")}`;
+
   return (
     <Card className="group relative w-full overflow-hidden border border-slate-200/80 bg-white shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md hover:border-emerald-200">
       {/* 左端のアクセントライン */}
       <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-emerald-400 to-teal-400 opacity-90" />
-      
+
       {/* shadcn独自の隠れ余白を強制リセット（!p-0）し、自前のdiv（p-3）で12pxの均等余白を再現 */}
       <CardContent className="!p-0">
-        <div className="p-3 pl-4 flex flex-col gap-3">
-          
+        <div className="py-0 pr-3 pl-4 flex flex-col gap-1">
           {/* 1行目：メタ情報 */}
           <div className="flex items-center justify-between text-[10px] text-slate-400 leading-none">
             <div className="flex items-center gap-3">
@@ -68,7 +77,9 @@ export function EventCard({ event }: EventCardProps) {
             {/* 日付 */}
             <div className="flex items-center gap-1 shrink-0">
               <Calendar className="h-3 w-3 text-sky-400 shrink-0" />
-              <span className="font-semibold text-slate-700">{formattedDate}</span>
+              <span className="font-semibold text-slate-700">
+                {formattedDate}
+              </span>
               <span>{formattedTime}〜</span>
             </div>
             {/* 場所 */}
@@ -76,8 +87,11 @@ export function EventCard({ event }: EventCardProps) {
               <MapPin className="h-3 w-3 text-emerald-400 shrink-0" />
               <span className="truncate text-slate-600">{event.location}</span>
             </div>
+            {/* 投稿日 */}
+            <div className="text-slate-500 shrink-0 ml-auto font-medium text-right leading-none">
+              <span>投稿日時：{formattedPostedAt}</span>
+            </div>
           </div>
-
         </div>
       </CardContent>
     </Card>

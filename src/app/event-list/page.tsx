@@ -35,12 +35,28 @@ export default function EventListPage() {
   // 現在選択されているソート条件を管理（初期値は投稿日時の降順）
   const [sortBy, setSortBy] = useState<SortOption>("postedAt_desc");
 
-  // コンポーネント読み込み時に MSW からデータをフェッチする
+  // MSWの準備完了を待ってからフェッチする
   useEffect(() => {
-    fetch("/api/events")
-      .then((res) => res.json())
-      .then((data) => setEvents(data))
-      .catch((err) => console.error(err));
+    const fetchEvents = async () => {
+      try {
+        const res = await fetch("/api/events");
+        
+        // エラー画面（HTML）を掴まされた場合にJSONパースエラーでクラッシュするのを防ぐ
+        if (!res.ok) {
+          throw new Error(`データの取得に失敗しました (Status: ${res.status})`);
+        }
+        
+        const data = await res.json();
+        setEvents(data);
+      } catch (err) {
+        console.error("Fetchエラー:", err);
+      }
+    };
+
+    // MSWの初期化（ブラウザへの登録完了）を一瞬待ってから実行する
+    const timer = setTimeout(fetchEvents, 100);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   // useMemoでソート結果をキャッシュ。sortByかデータが変わった時だけ再計算する

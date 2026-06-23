@@ -42,7 +42,7 @@ export default function EventListPage() {
         <p className="text-xs text-slate-500 mb-4 px-1 text-center md:text-left">
           これから開催される自然観察イベントを縦にスクロールして確認できます。
         </p>
-        
+
         {/* カードを縦に並べるタイムラインコンテナ */}
         <div className="space-y-4">
           {DUMMY_EVENTS.map((event) => (

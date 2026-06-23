@@ -1,5 +1,5 @@
 export const signinStyles = {
-  page: "min-h-screen w-full flex items-center justify-center bg-slate-50 px-4 py-20",
+  page: "h-screen w-full flex items-center justify-center px-4",
   card: "w-full max-w-lg rounded-[2.5rem] border border-slate-200/80 bg-white shadow-[0_24px_60px_-30px_rgba(15,23,42,0.2)] px-10 py-12",
   cardHeader: "flex flex-col items-center gap-4 text-center",
   title: "text-5xl font-semibold tracking-tight text-slate-950",

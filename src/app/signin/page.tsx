@@ -27,7 +27,7 @@ export default function SignInPage() {
     <div className={signinStyles.page}>
       <Card className={signinStyles.card}>
         <CardHeader className={signinStyles.cardHeader}>
-          <CardTitle className={signinStyles.title}>おかえりなさい</CardTitle>
+          <CardTitle className={signinStyles.title}>なちゅぽ～たる</CardTitle>
           <CardDescription className={signinStyles.description}>
             続行するには{appName}にサインインしてください
           </CardDescription>

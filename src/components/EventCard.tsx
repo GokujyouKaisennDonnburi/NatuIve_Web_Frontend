@@ -1,8 +1,8 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, Clock, MapPin, User } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 
 export type EventItem = {
   id: string;
@@ -43,7 +43,7 @@ export function EventCard({ event }: EventCardProps) {
 
   const posted = new Date(event.postedAt);
   const formattedPostedAt = `${posted.getMonth() + 1}/${posted.getDate()} ${String(
-    posted.getHours()
+    posted.getHours(),
   ).padStart(2, "0")}:${String(posted.getMinutes()).padStart(2, "0")}`;
 
   return (

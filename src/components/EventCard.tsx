@@ -29,7 +29,7 @@ export function EventCard({ event }: EventCardProps) {
   const formattedTime = start.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
 
   return (
-    <Card className="group relative w-full overflow-hidden border border-slate-200/80 bg-white shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md hover:border-emerald-200 cursor-pointer">
+    <Card className="group relative w-full overflow-hidden border border-slate-200/80 bg-white shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md hover:border-emerald-200">
       {/* 左端のアクセントライン */}
       <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-emerald-400 to-teal-400 opacity-90" />
       

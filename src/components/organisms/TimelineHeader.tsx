@@ -1,3 +1,6 @@
+"use client";
+
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { GlobalUserAvatar } from "@/components/molecules/GlobalUserAvatar";
 import { Button } from "@/components/ui/button";
@@ -9,6 +12,7 @@ import type { CurrentUser } from "@/types/user";
 type TimelineHeaderProps = {
   eventCount: number;
   isUserLoading: boolean;
+  onCreateEvent: () => void;
   session: AuthSession | null;
   user: CurrentUser | null;
 };
@@ -16,6 +20,7 @@ type TimelineHeaderProps = {
 export function TimelineHeader({
   eventCount,
   isUserLoading,
+  onCreateEvent,
   session,
   user,
 }: TimelineHeaderProps) {
@@ -32,6 +37,16 @@ export function TimelineHeader({
           <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
             {eventCount} 件のイベント
           </span>
+
+          <Button
+            type="button"
+            onClick={onCreateEvent}
+            className="h-8 rounded-full border border-emerald-200 bg-emerald-50 px-3 text-xs font-semibold text-emerald-700 shadow-sm hover:bg-emerald-100 hover:text-emerald-800 cursor-pointer"
+            aria-label="イベントを投稿"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">投稿</span>
+          </Button>
 
           {/* サインイン状態（userオブジェクトの有無）に応じた表示切り替え */}
           {isUserLoading ? (

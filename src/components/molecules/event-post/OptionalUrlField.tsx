@@ -53,6 +53,8 @@ export function OptionalUrlField({
           <Input
             id={id}
             type="url"
+            maxLength={255}
+            inputMode="url"
             placeholder="https://example.com/application"
             value={url}
             onChange={(event) => onUrlChange(event.target.value)}

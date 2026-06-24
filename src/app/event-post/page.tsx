@@ -14,6 +14,10 @@ import {
   type PriceCategory,
   PriceCategoryField,
 } from "@/components/molecules/event-post/PriceCategoryField";
+import {
+  type RequiredItem,
+  RequiredItemField,
+} from "@/components/molecules/event-post/RequiredItemField";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -35,10 +39,10 @@ type EventPostFormState = {
   location: string; // 開催場所
   eventDateTime: string; // 開催日時
   feeCategoryGroups: PriceCategory[]; // 参加費用のカテゴリと金額の配列
-  requiredItems: string; // 必要物の説明
   capacity: string; // 定員数
   applicationUrlEnabled: boolean; // 申し込みURLの有効化状態
   applicationUrl: string; // 申し込みURL
+  requiredItems: RequiredItem[]; // 持ち物の配列
 };
 
 // イベント投稿フォームの入力エラーを管理する型定義
@@ -50,7 +54,17 @@ type EventPostFormErrors = {
   feeCategoryGroups?: Record<number, string>;
   capacity?: string;
   applicationUrl?: string;
+  requiredItems?: Record<number, string>;
 };
+
+const MAX_TEXT_LENGTH = 255;
+
+const isValidLocalDateTime = (value: string) => {
+  const parsed = new Date(value);
+  return !Number.isNaN(parsed.getTime());
+};
+
+const toRfc3339 = (value: string) => new Date(value).toISOString();
 
 // フォーム初期状態
 const INITIAL_STATE: EventPostFormState = {
@@ -61,10 +75,10 @@ const INITIAL_STATE: EventPostFormState = {
   location: "",
   eventDateTime: "",
   feeCategoryGroups: [{ category: "一般", amount: "0" }],
-  requiredItems: "",
   capacity: "",
   applicationUrlEnabled: false,
   applicationUrl: "",
+  requiredItems: [],
 };
 
 // イベント投稿ページコンポーネント
@@ -146,19 +160,19 @@ export default function EventPostPage() {
   };
 
   // イベント本体を作成する仮バックエンド連携。
-  // 実装時は、ここで events テーブルを作成し、image_objectkey / pdf_objectkey を紐付ける。
+  // 実装時は、ここで events テーブルを作成し、imageObjectKeys / pdfObjectKeys を紐付ける。
   const createEventPost = async (payload: {
     eventName: string;
     eventContent: string;
-    location: string;
     eventDateTime: string;
+    location: string;
     feeCategoryGroups: PriceCategory[];
-    requiredItems: string;
     capacity: string;
     applicationUrlEnabled: boolean;
     applicationUrl: string;
-    imageObjectKey: string | null;
+    imageObjectKeys: string[];
     pdfObjectKeys: string[];
+    requiredItems: RequiredItem[];
   }) => {
     void payload;
 
@@ -189,6 +203,8 @@ export default function EventPostPage() {
     // 必須項目の検証
     if (!formState.eventName.trim()) {
       nextErrors.eventName = "イベント名は必須です。";
+    } else if (formState.eventName.trim().length > MAX_TEXT_LENGTH) {
+      nextErrors.eventName = "イベント名は255文字以内で入力してください。";
     }
 
     // 必須項目の検証
@@ -199,15 +215,24 @@ export default function EventPostPage() {
     // 必須項目の検証
     if (!formState.location.trim()) {
       nextErrors.location = "開催場所は必須です。";
+    } else if (formState.location.trim().length > MAX_TEXT_LENGTH) {
+      nextErrors.location = "開催場所は255文字以内で入力してください。";
     }
 
     // 必須項目の検証
     if (!formState.eventDateTime.trim()) {
       nextErrors.eventDateTime = "開催日時は必須です。";
+    } else if (!isValidLocalDateTime(formState.eventDateTime.trim())) {
+      nextErrors.eventDateTime = "開催日時の形式が正しくありません。";
     }
 
     // 参加費用の検証（カテゴリと金額が揃っているか）
     const feeErrors: Record<number, string> = {};
+    if (formState.feeCategoryGroups.length === 0) {
+      nextErrors.feeCategoryGroups = {
+        0: "参加費用は1件以上入力してください。",
+      };
+    }
     formState.feeCategoryGroups.forEach((group, index) => {
       // カテゴリが空の場合のエラー
       if (!group.category.trim()) {
@@ -226,24 +251,51 @@ export default function EventPostPage() {
       nextErrors.feeCategoryGroups = feeErrors;
     }
 
+    // 持ち物の検証（持ち物名が空でないか）
+    const requiredItemErrors: Record<number, string> = {};
+    formState.requiredItems.forEach((item, index) => {
+      if (!item.itemName.trim()) {
+        requiredItemErrors[index] = "持ち物名を入力してください。";
+      } else if (item.itemName.trim().length > MAX_TEXT_LENGTH) {
+        requiredItemErrors[index] = "持ち物名は255文字以内で入力してください。";
+      }
+    });
+    if (Object.keys(requiredItemErrors).length > 0) {
+      nextErrors.requiredItems = requiredItemErrors;
+    }
+
     // 定員数の検証（1以上の整数であるか）
     if (
       formState.capacity.trim() &&
       (!/^\d+$/.test(formState.capacity.trim()) ||
-        Number(formState.capacity) <= 0)
+        Number(formState.capacity) < 0)
     ) {
-      // 定員数が空でない場合、数字かつ1以上であることを確認
-      nextErrors.capacity = "定員数は1以上の整数で入力してください。";
+      // 定員数が空でない場合、0以上の整数であることを確認
+      nextErrors.capacity = "定員数は0以上の整数で入力してください。";
     }
 
     // 申し込みURLの検証（有効化されている場合、正しいURL形式であるか）
     if (formState.applicationUrlEnabled && formState.applicationUrl.trim()) {
+      if (formState.applicationUrl.trim().length > MAX_TEXT_LENGTH) {
+        nextErrors.applicationUrl =
+          "申し込みURLは255文字以内で入力してください。";
+      }
+
       // URLの形式を検証するために、try-catchでURLオブジェクトを生成
-      try {
-        new URL(formState.applicationUrl.trim());
-      } catch {
-        // URLオブジェクトの生成に失敗した場合、エラーとして設定
-        nextErrors.applicationUrl = "正しいURL形式で入力してください。";
+      if (!nextErrors.applicationUrl) {
+        try {
+          const parsedUrl = new URL(formState.applicationUrl.trim());
+          if (
+            parsedUrl.protocol !== "http:" &&
+            parsedUrl.protocol !== "https:"
+          ) {
+            nextErrors.applicationUrl =
+              "申し込みURLは http か https で始めてください。";
+          }
+        } catch {
+          // URLオブジェクトの生成に失敗した場合、エラーとして設定
+          nextErrors.applicationUrl = "正しいURL形式で入力してください。";
+        }
       }
     }
 
@@ -272,19 +324,18 @@ export default function EventPostPage() {
       const pdfObjectKeys = await uploadEventDocuments(
         formState.eventDocuments,
       );
-
       await createEventPost({
         eventName: formState.eventName,
         eventContent: formState.eventContent,
+        eventDateTime: toRfc3339(formState.eventDateTime),
         location: formState.location,
-        eventDateTime: formState.eventDateTime,
         feeCategoryGroups: formState.feeCategoryGroups,
-        requiredItems: formState.requiredItems,
         capacity: formState.capacity,
         applicationUrlEnabled: formState.applicationUrlEnabled,
         applicationUrl: formState.applicationUrl,
-        imageObjectKey,
+        imageObjectKeys: imageObjectKey ? [imageObjectKey] : [],
         pdfObjectKeys,
+        requiredItems: formState.requiredItems,
       });
 
       toast.success("イベント情報を登録しました。");
@@ -335,6 +386,7 @@ export default function EventPostPage() {
                 >
                   <Input
                     id={getFieldId("eventName")}
+                    maxLength={MAX_TEXT_LENGTH}
                     value={formState.eventName}
                     onChange={(event) =>
                       setField("eventName", event.target.value)
@@ -354,6 +406,8 @@ export default function EventPostPage() {
                 >
                   <Textarea
                     id={getFieldId("eventContent")}
+                    rows={8}
+                    className="max-h-60 resize-y overflow-y-auto"
                     value={formState.eventContent}
                     onChange={(event) =>
                       setField("eventContent", event.target.value)
@@ -476,6 +530,7 @@ export default function EventPostPage() {
                 >
                   <Input
                     id={getFieldId("location")}
+                    maxLength={MAX_TEXT_LENGTH}
                     value={formState.location}
                     onChange={(event) =>
                       setField("location", event.target.value)
@@ -554,19 +609,21 @@ export default function EventPostPage() {
                   </FormField>
                 </div>
 
-                {/* 必要物の入力フィールド */}
+                {/* 持ち物の入力フィールド */}
                 <FormField
                   id={getFieldId("requiredItems")}
-                  label="必要物"
-                  hint="持ち物や事前準備がある場合に入力してください。"
+                  label="持ち物"
+                  hint="持ち物名と必須判定をセットで管理します。"
+                  error={
+                    Object.keys(errors.requiredItems ?? {}).length > 0
+                      ? "持ち物の入力内容を確認してください。"
+                      : undefined
+                  }
                 >
-                  <Textarea
-                    id={getFieldId("requiredItems")}
-                    value={formState.requiredItems}
-                    onChange={(event) =>
-                      setField("requiredItems", event.target.value)
-                    }
-                    placeholder="例: 飲み物、歩きやすい靴、帽子"
+                  <RequiredItemField
+                    items={formState.requiredItems}
+                    onItemsChange={(items) => setField("requiredItems", items)}
+                    errors={errors.requiredItems}
                   />
                 </FormField>
               </div>

@@ -1,6 +1,7 @@
 "use client"; // ソート（状態管理）を行うため Client Component に変更
 
 import { EventCard, type EventItem } from "@/components/EventCard";
+import { Button } from "@/components/ui/button"; // 既存の共通ボタンをインポート
 import { ArrowUpDown } from "lucide-react"; // ソート用のアイコン
 import { useEffect, useMemo, useState } from "react"; // useEffect を追加
 
@@ -61,10 +62,6 @@ export default function EventListPage() {
             new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime()
           );
 
-        // 今後ソートを追加する場合は、ここに case を足す 例：
-        // case "startAt_asc": // 開催日時が近い順（昇順）
-        //   return new Date(a.startAt).getTime() - new Date(b.startAt).getTime();
-
         default:
           return 0; // そのまま
       }
@@ -74,8 +71,9 @@ export default function EventListPage() {
   // ソート済みのデータから、現在のページに必要な件数（最大15件）だけを切り出す
   const paginatedEvents = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    return sortedEvents.slice(startIndex, endIndex);
+    const endIndex = startIndex + startIndex + ITEMS_PER_PAGE;
+    // 既存の slice(startIndex, endIndex) に修正
+    return sortedEvents.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [sortedEvents, currentPage]);
 
   // 全ページ数を計算（30件なら 30÷15＝2ページ）
@@ -116,9 +114,12 @@ export default function EventListPage() {
 
             {/* サインイン状態に応じた表示切り替え */}
             {!isSignedIn ? (
-              <button className="text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-md transition-colors shrink-0">
+              <Button 
+                size="sm" 
+                className="text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-md transition-colors shrink-0 border-none cursor-pointer shadow-none"
+              >
                 新規登録・サインイン
-              </button>
+              </Button>
             ) : (
               <div className="w-8 h-8 rounded-full bg-slate-200 shrink-0 border border-slate-300" title="ユーザーアイコン（今後実装予定）" />
             )}
@@ -142,8 +143,6 @@ export default function EventListPage() {
               className="text-xs font-medium text-slate-600 bg-transparent outline-none cursor-pointer"
             >
               <option value="postedAt_desc">投稿が新しい順</option>
-              {/* 今後追加する場合はここをコメントアウト解除して増やす */}
-              {/* <option value="startAt_asc">開催が近い順</option> */}
             </select>
           </div>
         </div>
@@ -160,55 +159,64 @@ export default function EventListPage() {
         {totalPages > 1 && (
           <div className="mt-8 flex items-center justify-center gap-1 px-2">
             {/* 先頭ページへジャンプ */}
-            <button
+            <Button
+              variant="outline"
+              size="xs"
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
-              className="px-2.5 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-2.5 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-none"
             >
               先頭
-            </button>
+            </Button>
 
             {/* 前のページ */}
-            <button
+            <Button
+              variant="outline"
+              size="xs"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-2.5 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-2.5 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-none"
             >
               前
-            </button>
+            </Button>
 
             {/* 前後2ページの範囲で直接ページ指定して飛ぶボタン */}
             {pageNumbers.map((page) => (
-              <button
+              <Button
                 key={page}
+                size="xs"
                 onClick={() => setCurrentPage(page)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${
+                className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors cursor-pointer shadow-none ${
                   currentPage === page
-                    ? "bg-slate-950 text-white border-slate-950" // 現在のページ
-                    : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+                    ? "bg-slate-950 text-white border-slate-950 hover:bg-slate-900" // 元の「現在ページ（黒）」
+                    : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"   // 通常のページ番号
                 }`}
               >
                 {page}
-              </button>
+              </Button>
             ))}
 
             {/* 次のページ */}
-            <button
+            <Button
+              variant="outline"
+              size="xs"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="px-2.5 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-2.5 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-none"
             >
               次
-            </button>
+            </Button>
 
             {/* 末尾ページへジャンプ */}
-            <button
+            <Button
+              variant="outline"
+              size="xs"
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}
-              className="px-2.5 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-2.5 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-none"
             >
               末尾
-            </button>
+            </Button>
           </div>
         )}
       </main>

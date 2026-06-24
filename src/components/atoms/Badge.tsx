@@ -1,6 +1,6 @@
+import type { ComponentPropsWithoutRef } from "react";
 import { Badge as UiBadge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import type { ComponentPropsWithoutRef } from "react";
 
 type BadgeProps = ComponentPropsWithoutRef<typeof UiBadge> & {
   tone?: "default" | "accent" | "subtle";

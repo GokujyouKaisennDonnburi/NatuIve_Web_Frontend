@@ -1,6 +1,6 @@
 import { HttpResponse, http } from "msw";
 
-// ダミーイベントデータを生成
+// ダミーユーザーデータを生成
 const sampleUsers = [
   {
     id: "user-1",

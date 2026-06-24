@@ -25,7 +25,6 @@ export default function AuthCallbackPage() {
 
       // 認証成功時の処理を一度だけ実行するためのフラグを設定
       handled = true;
-      window.clearTimeout(timeoutId);
       toast.success("ログインに成功しました。");
       router.replace(ROUTES.EVENT_LIST);
     };
@@ -38,7 +37,6 @@ export default function AuthCallbackPage() {
 
       // 認証失敗時の処理を一度だけ実行するためのフラグを設定
       handled = true;
-      window.clearTimeout(timeoutId);
       toast.error("ログインに失敗しました。もう一度お試しください。");
       router.replace(ROUTES.SIGNIN);
     };
@@ -66,15 +64,9 @@ export default function AuthCallbackPage() {
       }
     });
 
-    // 10秒後にタイムアウトとしてエラー処理を実行する
-    const timeoutId = window.setTimeout(() => {
-      finishError();
-    }, 10000);
-
     // クリーンアップ関数を返すことで、コンポーネントがアンマウントされたときにタイムアウトとサブスクリプションを解除する
     return () => {
       handled = true;
-      window.clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
   }, [router]);

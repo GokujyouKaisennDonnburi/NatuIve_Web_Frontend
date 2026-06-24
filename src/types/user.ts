@@ -1,11 +1,8 @@
-export type UserRole = "admin" | "member" | "viewer";
-
 // ユーザーの型定義
 export type User = {
   id: string;
   name: string;
   email: string;
-  role: UserRole;
 };
 
 // ユーザー一覧のレスポンス型定義

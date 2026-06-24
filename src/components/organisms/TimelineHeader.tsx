@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { GlobalUserAvatar } from "@/components/molecules/GlobalUserAvatar";
 import { Button } from "@/components/ui/button";
+import { ROUTES } from "@/constants/routes";
 
 // UserProfileの型定義をこちらにも用意（または共通の型定義ファイルからimportでもOKです）
 export type UserProfile = {
@@ -41,10 +43,11 @@ export function TimelineHeader({
           ) : !user ? (
             // 未サインイン状態：登録・サインインボタン
             <Button
+              asChild
               size="sm"
               className="text-xs font-medium text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-md transition-colors shrink-0 border-none cursor-pointer shadow-none"
             >
-              新規登録・サインイン
+              <Link href={ROUTES.SIGNIN}>新規登録・サインイン</Link>
             </Button>
           ) : (
             // サインイン済み状態：アバターアイコン

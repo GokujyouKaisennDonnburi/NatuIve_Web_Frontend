@@ -167,10 +167,10 @@ export default function EventListPage() {
     return numbers;
   }, [currentPage, totalPages]);
 
-  // ソートが変更されたら、強制的に1ページ目に戻す（ユーザーの迷子防止）
-  useEffect(() => {
+  const handleSortChange = (value: SortOption) => {
+    setSortBy(value);
     setCurrentPage(1);
-  }, [sortBy]);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50/60 text-slate-900 antialiased selection:bg-emerald-100">
@@ -193,7 +193,7 @@ export default function EventListPage() {
             <ArrowUpDown className="h-3.5 w-3.5 text-slate-400" />
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              onChange={(e) => handleSortChange(e.target.value as SortOption)}
               className="text-xs font-medium text-slate-600 bg-transparent outline-none cursor-pointer"
             >
               <option value="postedAt_desc">投稿が新しい順</option>

@@ -1,7 +1,7 @@
 "use client";
 
-import { Plus } from "lucide-react";
 import Link from "next/link";
+import { CreateEventButton } from "@/components/atoms/CreateEventButton";
 import { GlobalUserAvatar } from "@/components/molecules/GlobalUserAvatar";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
@@ -38,15 +38,12 @@ export function TimelineHeader({
             {eventCount} 件のイベント
           </span>
 
-          <Button
+          {/* イベント投稿ボタン */}
+          <CreateEventButton
             type="button"
             onClick={onCreateEvent}
-            className="h-8 rounded-full border border-emerald-200 bg-emerald-50 px-3 text-xs font-semibold text-emerald-700 shadow-sm hover:bg-emerald-100 hover:text-emerald-800 cursor-pointer"
             aria-label="イベントを投稿"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">投稿</span>
-          </Button>
+          ></CreateEventButton>
 
           {/* サインイン状態（userオブジェクトの有無）に応じた表示切り替え */}
           {isUserLoading ? (

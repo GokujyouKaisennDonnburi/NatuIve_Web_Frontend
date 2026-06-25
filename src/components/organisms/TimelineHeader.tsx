@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { CreateEventButton } from "@/components/atoms/CreateEventButton";
 import { GlobalUserAvatar } from "@/components/molecules/GlobalUserAvatar";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
@@ -9,6 +12,7 @@ import type { CurrentUser } from "@/types/user";
 type TimelineHeaderProps = {
   eventCount: number;
   isUserLoading: boolean;
+  onCreateEvent: () => void;
   session: AuthSession | null;
   user: CurrentUser | null;
 };
@@ -16,6 +20,7 @@ type TimelineHeaderProps = {
 export function TimelineHeader({
   eventCount,
   isUserLoading,
+  onCreateEvent,
   session,
   user,
 }: TimelineHeaderProps) {
@@ -32,6 +37,13 @@ export function TimelineHeader({
           <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
             {eventCount} 件のイベント
           </span>
+
+          {/* イベント投稿ボタン */}
+          <CreateEventButton
+            type="button"
+            onClick={onCreateEvent}
+            aria-label="イベントを投稿"
+          ></CreateEventButton>
 
           {/* サインイン状態（userオブジェクトの有無）に応じた表示切り替え */}
           {isUserLoading ? (

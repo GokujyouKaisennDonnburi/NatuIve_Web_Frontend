@@ -1,10 +1,13 @@
 "use client"; // ソート（状態管理）を行うため Client Component に変更
 
-import { ArrowUpDown } from "lucide-react"; // ソート用のアイコン
+import { ArrowUpDown } from "lucide-react"; // ソートアイコンをインポート
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react"; // useEffect を追加
+import { toast } from "sonner";
 import { EventCard, type EventItem } from "@/components/EventCard";
 import { TimelineHeader } from "@/components/organisms/TimelineHeader"; // headerコンポーネントをインポート
 import { Button } from "@/components/ui/button"; // 既存の共通ボタンをインポート
+import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
@@ -21,10 +24,28 @@ export default function EventListPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 15; // 1ページあたりの最大表示件数
 
+  const router = useRouter(); // ルーターオブジェクトを取得（ページ遷移用）
+
   // 認証状態を取得するカスタムフックを使用
   const { session, isLoading: isAuthLoading } = useAuth();
   const { user: currentUser, isLoading: isUserLoading } =
     useCurrentUser(session);
+
+  // イベント作成ボタンのクリックハンドラ
+  const handleCreateEvent = () => {
+    // 認証状態のロード中は何もしない
+    if (isAuthLoading) {
+      return;
+    }
+
+    // 認証されていない場合はログインを促すトーストを表示
+    if (!session) {
+      toast.error("イベントを投稿するにはログインしてください。");
+      return;
+    }
+
+    router.push(ROUTES.EVENT_POST);
+  };
 
   /*
   // MSW のログイン状態取得は残しています。
@@ -166,6 +187,7 @@ export default function EventListPage() {
       <TimelineHeader
         eventCount={events.length}
         isUserLoading={isAuthLoading || isUserLoading}
+        onCreateEvent={handleCreateEvent}
         session={session}
         user={currentUser}
       />

@@ -1,6 +1,6 @@
-# NatuIve Web Frontend
+# NatuEve Web Frontend
 
-NatuIve のフロントエンド開発用リポジトリです。
+NatuEve のフロントエンド開発用リポジトリです。
 
 Next.js 15 + React 19 + TypeScript 5 + Tailwind CSS 4 + Biome 2 + MSW 2 + shadcn/ui をベースに構築しています。
 
@@ -23,7 +23,7 @@ Atomic Design を前提としたディレクトリ構成を採用し、初心者
 
 ## 概要
 
-NatuIve Web Frontend は、Next.js App Router を利用したフロントエンドアプリケーションです。
+NatuEve Web Frontend は、Next.js App Router を利用したフロントエンドアプリケーションです。
 
 以下のような開発方針を採用しています。
 

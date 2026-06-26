@@ -1,4 +1,4 @@
-# NatuIve_Web_Frontend
+# NatuEve_Web_Frontend
 
 なちゅいべの Web フロントエンド。イベントの閲覧・検索・投稿・参加申し込みを行う。
 

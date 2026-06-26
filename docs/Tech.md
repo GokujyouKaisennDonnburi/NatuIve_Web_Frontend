@@ -4,7 +4,7 @@
 
 ## 1. プロジェクト概要
 
-NatuIve Web Frontend は、Next.js 15 / React 19 / TypeScript 5 を土台にしたフロントエンドのスターター構成です。
+NatuEve Web Frontend は、Next.js 15 / React 19 / TypeScript 5 を土台にしたフロントエンドのスターター構成です。
 Atomic Design、services、hooks、types、utils、constants、mocks を分けて、初心者でも役割を追いやすいように整理しています。
 
 現在の構成では、ホーム画面、ドキュメント画面、ユーザー画面を持ち、MSW を使った開発用モック API も含めています。

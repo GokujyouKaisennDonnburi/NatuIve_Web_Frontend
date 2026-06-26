@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { AppLayout } from "@/components/layouts/AppLayout";
 import { MSWProvider } from "@/mocks/MSWProvider";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.css";
 
 const geistSans = Geist({
@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NatuIve Web Frontend",
+  title: "NatuEve Web Frontend",
   description: "Next.js 15 + Tailwind CSS 4 + Biome + MSW + shadcn/ui starter",
 };
 

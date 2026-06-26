@@ -1,24 +1,45 @@
 "use client"; // ソート（状態管理）を行うため Client Component に変更
 
-import { ArrowUpDown } from "lucide-react"; // ソートアイコンをインポート
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react"; // useEffect を追加
-import { toast } from "sonner";
 import { EventCard, type EventItem } from "@/components/EventCard";
 import { TimelineHeader } from "@/components/organisms/TimelineHeader"; // headerコンポーネントをインポート
 import { Button } from "@/components/ui/button"; // 既存の共通ボタンをインポート
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/useAuth";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { ArrowUpDown } from "lucide-react"; // ソートアイコンをインポート
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react"; // useEffect を追加
+import { toast } from "sonner";
 
-// ソートの種類をここで一元管理（増えたらここに追加）
-type SortOption = "postedAt_desc" /* | "startAt_asc" | "startAt_desc" */;
+// API仕様に合わせて許可されているソートカラムを定義
+type SortOption = "created_at" | "event_date";
+
+// APIレスポンスの型定義
+type ApiResponseEvent = {
+  createdAt: string;
+  eventDate: string;
+  id: string;
+  location: string;
+  profileId: string;
+  title: string;
+};
+
+type EventsApiResponse = {
+  events: ApiResponseEvent[];
+  limit: number;
+  offset: number;
+  totalCount: number;
+};
 
 export default function EventListPage() {
   // データを保持するステートを定義（初期値は空配列）
   const [events, setEvents] = useState<EventItem[]>([]);
-  // 現在選択されているソート条件を管理（初期値は投稿日時の降順）
-  const [sortBy, setSortBy] = useState<SortOption>("postedAt_desc");
+  
+  // 全体のデータ件数を管理するステート
+  const [totalCount, setTotalCount] = useState(0);
+
+  // 現在選択されているソート条件を管理（初期値は created_at）
+  const [sortBy, setSortBy] = useState<SortOption>("created_at");
 
   // ページネーション用のステート（1ページ目からスタート）
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,66 +68,14 @@ export default function EventListPage() {
     router.push(ROUTES.EVENT_POST);
   };
 
-  /*
-  // MSW のログイン状態取得は残しています。
-  // 実運用では Supabase の認証状態を使うため、現在はコメントアウトしています。
-  useEffect(() => {
-    let cancelled = false;
-
-    const fetchUserProfile = async (attempt = 0): Promise<void> => {
-      try {
-        const res = await fetch("/api/v1/me");
-
-        if (res.status === 401) {
-          return;
-        }
-
-        if (!res.ok) {
-          throw new Error(
-            `ユーザー情報の取得に失敗しました (Status: ${res.status})`,
-          );
-        }
-
-        const data = (await res.json()) as UserProfile;
-
-        if (!cancelled) {
-          setUser(data);
-          setIsUserLoading(false);
-        }
-      } catch (err) {
-        if (!cancelled && attempt < 5) {
-          setTimeout(
-            () => void fetchUserProfile(attempt + 1),
-            200 * (attempt + 1),
-          );
-          return;
-        }
-
-        console.log("ユーザーが未サインイン、または取得エラー:", err);
-        if (!cancelled) {
-          setUser(null);
-          setIsUserLoading(false);
-        }
-      }
-    };
-
-    void fetchUserProfile();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-  */
-
   // MSWの準備完了を待ってからフェッチする（既存のイベント一覧取得用）
+  // ※ここは次のステップ2で書き換えます！今は古いAPIへの通信のままです。
   useEffect(() => {
     let cancelled = false; // コンポーネントがアンマウントされたかどうかを追跡するフラグ
-    // データ取得関数を定義（リトライ機能付き）
     const fetchEvents = async (attempt = 0): Promise<void> => {
       try {
         const res = await fetch("/api/events"); // MSWのモックAPIを叩く
 
-        // MSW の起動前に素通りして 404 になることがあるため、数回はリトライする
         if (!res.ok) {
           if (!cancelled && attempt < 5) {
             setTimeout(
@@ -115,36 +84,33 @@ export default function EventListPage() {
             );
             return;
           }
-
-          // それでも失敗した場合はエラーを投げる
           throw new Error(`データの取得に失敗しました (Status: ${res.status})`);
         }
 
-        const data = (await res.json()) as EventItem[]; // 取得したデータを型アサーションして EventItem[] として扱う
+        const data = (await res.json()) as EventItem[];
         if (!cancelled) setEvents(data);
       } catch (err) {
-        // MSW の起動タイミングによっては最初のリクエストが素通りすることがあるため、数回だけリトライする
         if (!cancelled && attempt < 5) {
           setTimeout(() => void fetchEvents(attempt + 1), 200 * (attempt + 1));
           return;
         }
-
-        console.error("Fetchエラー:", err); // コンソールにエラーを出力
+        console.error("Fetchエラー:", err);
       }
     };
 
-    // データ取得関数を呼び出す
     void fetchEvents();
     return () => {
       cancelled = true;
     };
   }, []);
 
-  // useMemoでソート結果をキャッシュ。sortByかデータが変わった時だけ再計算する
+  // useMemoでソート結果をキャッシュ。
+  // ※ここもステップ3で削除しますが、エラー回避のため case を書き換えています
   const sortedEvents = useMemo(() => {
     return [...events].sort((a, b) => {
       switch (sortBy) {
-        case "postedAt_desc": // 投稿日時が新しい順（降順）
+        // ▼ 変更: "postedAt_desc" から "created_at" に変更
+        case "created_at":
           return (
             new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime()
           );
@@ -162,7 +128,7 @@ export default function EventListPage() {
     return sortedEvents.slice(startIndex, _endIndex);
   }, [sortedEvents, currentPage]);
 
-  // 全ページ数を計算（30件なら 30÷15＝2ページ）
+  // 全ページ数を計算
   const totalPages = Math.ceil(events.length / ITEMS_PER_PAGE);
 
   // 現在のページから前後2ページ分の範囲のページ番号を動的に生成
@@ -207,7 +173,9 @@ export default function EventListPage() {
               onChange={(e) => handleSortChange(e.target.value as SortOption)}
               className="text-xs font-medium text-slate-600 bg-transparent outline-none cursor-pointer"
             >
-              <option value="postedAt_desc">投稿が新しい順</option>
+              {/* 新しいSortOptionの型に合わせて変更 */}
+              <option value="created_at">投稿が新しい順</option>
+              <option value="event_date">開催日が近い順</option>
             </select>
           </div>
         </div>

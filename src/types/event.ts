@@ -1,5 +1,5 @@
 // イベント作成 API（POST /api/v1/events）の DTO 群。
-// バックエンド（NatuIve_API internal/model/event.go の CreateEventRequest）と
+// バックエンド（NatuEve_API internal/model/event.go の CreateEventRequest）と
 // フィールド名・型を一致させる。OpenAPI codegen は未導入のため upload.ts と同様に手書きする。
 
 // 費用内訳の入力 DTO（カテゴリと金額）。cost は円・0 以上の整数。

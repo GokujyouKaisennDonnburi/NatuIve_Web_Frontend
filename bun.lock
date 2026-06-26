@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "natuive-web-frontend",
+      "name": "NatuEve-web-frontend",
       "dependencies": {
         "@supabase/supabase-js": "^2.108.2",
         "class-variance-authority": "^0.7.1",

@@ -12,7 +12,7 @@ import { toast } from "sonner";
 // API仕様に合わせて許可されているソートカラムを定義
 type SortOption = "created_at" | "event_date";
 
-// ▼ 変更: 新しいAPI仕様に合わせた型定義
+// ▼ 新しいAPI仕様に合わせた型定義
 type ApiResponseProfile = {
   id: string;
   displayName: string;
@@ -198,7 +198,8 @@ export default function EventListPage() {
     setCurrentPage(1);
   };
 
-  const dummySession = currentUser ? { user: currentUser } : null;
+  // ▼ 変更: 型エラーの原因だった不完全な dummySession と as any を廃止
+  // TimelineHeaderが必要としているHeaderUser型に1対1で綺麗にマッピング
   const mappedUserForHeader = currentUser
     ? {
         name: currentUser.displayName,
@@ -212,8 +213,7 @@ export default function EventListPage() {
         eventCount={totalCount}
         isUserLoading={isAuthLoading}
         onCreateEvent={handleCreateEvent}
-        session={dummySession as any}
-        user={mappedUserForHeader as any}
+        user={mappedUserForHeader}
       />
 
       <main className="mx-auto max-w-xl px-4 pt-4 pb-16">

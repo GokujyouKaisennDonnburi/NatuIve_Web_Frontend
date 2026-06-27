@@ -20,7 +20,13 @@ export function EventImageCarousel({
 
   // 画像が存在しない場合はプレースホルダーを表示
   if (!mainImage) {
-    return <div className="h-56 w-full rounded-xl bg-slate-100" />;
+    return (
+      <div
+        className="h-56 w-full rounded-xl bg-slate-100"
+        role="img"
+        aria-label={`${title} の画像はありません`}
+      />
+    );
   }
 
   return (

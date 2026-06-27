@@ -31,7 +31,7 @@ export function EventCard({ event }: EventCardProps) {
   // ローディングの高さも実際のカードの高さに合わせて調整
   if (!isMounted)
     return (
-      <div className="w-full h-[76px] bg-slate-100 rounded-lg animate-pulse" />
+      <div className="w-full h-19 bg-slate-100 rounded-lg animate-pulse" />
     );
 
   const start = new Date(event.eventDate);
@@ -53,7 +53,16 @@ export function EventCard({ event }: EventCardProps) {
 
   return (
     <Card
+      role="link"
+      tabIndex={0}
+      aria-label={`${event.title} の詳細へ移動`}
       onClick={() => router.push(`/event/${event.id}`)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          router.push(`/event/${event.id}`);
+        }
+      }}
       className="group relative w-full overflow-hidden border border-slate-200/80 bg-white shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md hover:border-emerald-200 cursor-pointer"
     >
       <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-emerald-400 to-teal-400 opacity-90" />

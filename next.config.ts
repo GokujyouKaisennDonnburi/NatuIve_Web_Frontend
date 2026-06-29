@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizeCss: true,
   },
+
   async rewrites() {
     return [
       {

@@ -138,7 +138,7 @@ export default function UserProfilePage(props: PageProps) {
     );
   }
 
-  // ★ 自分のプロフィールかどうかの判定フラグ
+  // 自分のプロフィールかどうかの判定フラグ
   const isOwnProfile = currentUserId === userId;
 
   return (

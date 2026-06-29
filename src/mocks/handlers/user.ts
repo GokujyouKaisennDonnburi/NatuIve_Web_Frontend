@@ -64,14 +64,14 @@ const sampleUserEvents = {
     },
   ],
   participated: [
-    {
+    /*{
       id: "201",
       title: "代々木公園ピクニック＆ゴミ拾い",
       location: "東京都 代々木公園",
       createdAt: "2026-05-20T10:00:00Z",
       eventDate: "2026-06-10T10:00:00Z",
       profileId: "user-2",
-    },
+    },*/
   ],
 };
 

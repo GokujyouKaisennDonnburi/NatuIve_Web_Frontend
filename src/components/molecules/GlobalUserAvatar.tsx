@@ -4,6 +4,7 @@ import { User } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
+// ユーザーアバターコンポーネントのプロパティ型定義
 interface UserAvatarProps {
   name?: string;
   iconUrl?: string;
@@ -27,7 +28,7 @@ export function GlobalUserAvatar({
       role="img"
       aria-label={name ?? "ユーザーアバター"}
     >
-      {shouldShowImage ? (
+      {shouldShowImage && iconUrl ? (
         <Image
           key={iconUrl}
           src={iconUrl}

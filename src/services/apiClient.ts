@@ -1,4 +1,9 @@
 import { supabase } from "@/lib/supabase";
+import {
+  getMockAuthSession,
+  isMockAuthEnabled,
+  syncMockWorker,
+} from "@/services/mockAuth";
 
 // API のベース URL。未設定なら相対パス（開発時は MSW がモックする）。
 const API_BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL ?? "").replace(
@@ -37,13 +42,21 @@ export async function apiFetch(
 
   // 認証が必要な場合は、Supabaseのセッションからアクセストークンを取得してAuthorizationヘッダーに設定
   if (auth) {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    if (isMockAuthEnabled()) {
+      await syncMockWorker(true);
+      const mockSession = getMockAuthSession();
+      if (mockSession?.token) {
+        mergedHeaders.set("Authorization", `Bearer ${mockSession.token}`);
+      }
+    } else {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-    // セッションが存在する場合は、AuthorizationヘッダーにBearerトークンを設定
-    if (session?.access_token) {
-      mergedHeaders.set("Authorization", `Bearer ${session.access_token}`);
+      // セッションが存在する場合は、AuthorizationヘッダーにBearerトークンを設定
+      if (session?.access_token) {
+        mergedHeaders.set("Authorization", `Bearer ${session.access_token}`);
+      }
     }
   }
 

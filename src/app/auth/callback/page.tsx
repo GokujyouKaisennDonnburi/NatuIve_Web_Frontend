@@ -1,11 +1,12 @@
 // src/app/auth/callback/page.tsx
 "use client";
 
+import { ROUTES } from "@/constants/routes";
+import { supabase } from "@/lib/supabase";
+import { getMockAuthSession, isMockAuthEnabled } from "@/services/mockAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { ROUTES } from "@/constants/routes";
-import { supabase } from "@/lib/supabase";
 
 // 認証コールバックページ
 // - Google OAuthのリダイレクト先として使用される。
@@ -16,6 +17,19 @@ export default function AuthCallbackPage() {
   // 認証状態の変化を監視する副作用
   useEffect(() => {
     let handled = false;
+
+    // モック認証が有効な場合の処理
+    if (isMockAuthEnabled()) {
+      if (getMockAuthSession()) {
+        toast.success("ログインに成功しました。");
+        router.replace(ROUTES.EVENT_LIST);
+      } else {
+        toast.error("ログインに失敗しました。もう一度お試しください。");
+        router.replace(ROUTES.SIGNIN);
+      }
+
+      return;
+    }
 
     const exchangeSession = async () => {
       const code = new URLSearchParams(window.location.search).get("code");

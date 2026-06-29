@@ -1,5 +1,6 @@
 "use client";
 
+import { syncMockWorker } from "@/services/mockAuth";
 import { useEffect } from "react";
 
 type MSWProviderProps = {
@@ -12,11 +13,7 @@ export function MSWProvider({ children }: Readonly<MSWProviderProps>) {
       return;
     }
 
-    void import("./browser").then(({ worker }) => {
-      void worker.start({
-        onUnhandledRequest: "bypass",
-      });
-    });
+    void syncMockWorker(process.env.NEXT_PUBLIC_USE_MSW === "true");
   }, []);
 
   return children;

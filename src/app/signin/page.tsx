@@ -1,6 +1,5 @@
 "use client";
 
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,7 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ROUTES } from "@/constants/routes";
 import { signInWithGoogle } from "@/services/auth";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { signinStyles } from "./signinStyles";
 
 /**
@@ -21,11 +23,15 @@ import { signinStyles } from "./signinStyles";
 
 export default function SignInPage() {
   const appName = "Google";
+  const router = useRouter();
 
   // Googleサインインボタンのクリックハンドラ
   const handleGoogleSignIn = async () => {
     try {
-      await signInWithGoogle(); // サインイン処理を呼び出す
+      const isMockLogin = await signInWithGoogle(); // サインイン処理を呼び出す
+      if (isMockLogin) {
+        router.replace(ROUTES.EVENT_LIST);
+      }
     } catch (error) {
       console.error("Google sign-in failed", error);
       toast.error("サインインに失敗しました。もう一度お試しください。");

@@ -131,6 +131,11 @@ export default function EventListPage() {
 
     const fetchEvents = async (attempt = 0): Promise<void> => {
       if (cancelled) return;
+
+      // セッションがロード中の場合は待機
+      if (isSessionLoading) return;
+
+      // セッションがない（未ログイン）場合はAPIを叩かず終了
       try {
         const offset = (currentPage - 1) * ITEMS_PER_PAGE;
         const order = sortBy === "event_date" ? "asc" : "desc";
@@ -144,7 +149,7 @@ export default function EventListPage() {
         // 念のためイベント取得APIにもトークンがあれば渡すよう設定（不要な場合はheadersを外してもOKです）
         const headers: Record<string, string> = {};
         if (session?.token) {
-          headers["Authorization"] = `Bearer ${session.token}`;
+          headers.Authorization = `Bearer·${session.token}`;
         }
 
         const res = await fetch(`/api/v1/events?${params.toString()}`, {
@@ -200,7 +205,7 @@ export default function EventListPage() {
     return () => {
       cancelled = true;
     };
-  }, [currentPage, sortBy, session]); // 依存配列に session を追加
+  }, [currentPage, sortBy, session, isSessionLoading]); // 依存配列に session と loading 状態を追加
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 

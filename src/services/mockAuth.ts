@@ -52,17 +52,16 @@ const writeStoredSession = (session: AuthSession | null) => {
     return;
   }
 
-  // localStorage に保存する際に、セッションが null の場合は削除する
   try {
     if (session) {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
     } else {
       window.localStorage.removeItem(STORAGE_KEY);
     }
-
-    window.dispatchEvent(new Event(CHANGE_EVENT));
   } catch {
     // localStorage が使えない環境や容量超過では、モック認証を静かに無効化する
+  } finally {
+    window.dispatchEvent(new Event(CHANGE_EVENT));
   }
 };
 
@@ -103,6 +102,7 @@ export async function syncMockWorker(enabled: boolean) {
 
   if (!enabled) {
     if (mockWorkerPromise) {
+      await mockWorkerPromise.catch(() => undefined);
       const { worker } = await import("@/mocks/browser");
       worker.stop();
       mockWorkerPromise = null;

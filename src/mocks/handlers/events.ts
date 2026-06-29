@@ -101,12 +101,11 @@ const getPagedEvents = (url: URL): MockEventListResponse => {
 
 // MSWのハンドラーを定義
 export const eventHandlers = [
+  // イベント一覧取得モックエンドポイント
   http.get("/api/v1/events", ({ request }) => {
     return HttpResponse.json(getPagedEvents(new URL(request.url)));
   }),
-  http.get("/api/events", ({ request }) => {
-    return HttpResponse.json(getPagedEvents(new URL(request.url)));
-  }),
+
   // 新しいイベントを作成するモックエンドポイント
   http.post("/api/v1/events", async ({ request }) => {
     const authorizationHeader = request.headers.get("authorization");

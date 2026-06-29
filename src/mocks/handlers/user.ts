@@ -97,11 +97,11 @@ export const userHandlers = [
     }
 
     // Bearer の後ろのトークン文字列（実際のIDが入っていると仮定）をIDとして流用するハック
-    const token = authHeader?.split(" ")[1];
+    const token = authHeader?.split(" ")[1]?.trim();
 
     return HttpResponse.json({
       ...sampleCurrentUser,
-      id: token, // モックが返す自分のIDもURLと同じになるようにする
+      id: token || sampleCurrentUser.id, // モックが返す自分のIDもURLと同じになるようにする
     });
   }),
 

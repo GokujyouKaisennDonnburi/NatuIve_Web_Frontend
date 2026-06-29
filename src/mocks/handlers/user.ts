@@ -86,33 +86,43 @@ export const userHandlers = [
     return HttpResponse.json({ users: sampleUsers });
   }),
 
-  // 現在のユーザー情報取得モック
-  http.get("/api/v1/me", ({ request }) => {
-    // 認証トークンが無効な場合は401エラーを返す
-    if (!hasBearerToken(request.headers.get("authorization"))) {
-      return HttpResponse.json(
-        {
-          error: {
-            code: "unauthorized",
-            message: "認証トークンが無効です",
-          },
-        },
-        { status: 401 },
-      );
+  // 既存の現在のユーザー情報取得モック
+http.get("/api/v1/me", ({ request }) => {
+    const authHeader = request.headers.get("authorization");
+    if (!hasBearerToken(authHeader)) {
+      return HttpResponse.json({ error: { code: "unauthorized", message: "認証無効" } }, { status: 401 });
     }
 
-    return HttpResponse.json(sampleCurrentUser);
+    // Bearer の後ろのトークン文字列（実際のIDが入っていると仮定）をIDとして流用するハック
+    const token = authHeader!.split(" ")[1];
+
+    return HttpResponse.json({
+      ...sampleCurrentUser,
+      id: token, // モックが返す自分のIDもURLと同じになるようにする
+    });
   }),
 
   // 指定したIDのユーザープロフィール取得API
   http.get("/api/v1/users/:id", ({ params }) => {
     const { id } = params;
+    // まずは事前定義されたモックデータ(user-1, user-2)を探す
     const user = sampleUserProfiles.find((u) => u.id === id);
 
-    if (!user) {
-      return new HttpResponse(null, { status: 404 });
+    if (user) {
+      return HttpResponse.json(user);
     }
-    return HttpResponse.json(user);
+
+    // 未知のID（実際のGoogleアカウントIDなど）が来た場合のフォールバック
+    // そのIDを持った動的なモックユーザーを生成して返す
+    const dynamicUser = {
+      id: id,
+      displayName: "ログインユーザー (動的モック)",
+      // IDをシード値にして、ランダムだけどIDごとに固定のアイコンを生成する無料サービスを利用
+      avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${id}`,
+      bio: "Googleアカウントでログイン中の動的モックプロフィールです。\n（実際のAPIが完成するまでの仮データです）",
+    };
+
+    return HttpResponse.json(dynamicUser);
   }),
 
   // 指定したIDのユーザーが主催したイベント取得API

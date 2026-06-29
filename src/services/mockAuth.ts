@@ -113,10 +113,15 @@ export async function syncMockWorker(enabled: boolean) {
   // モックワーカーがまだ起動していない場合は、起動する
   if (!mockWorkerPromise) {
     mockWorkerPromise = (async () => {
-      const { worker } = await import("@/mocks/browser");
-      await worker.start({
-        onUnhandledRequest: "bypass",
-      });
+      try {
+        const { worker } = await import("@/mocks/browser");
+        await worker.start({
+          onUnhandledRequest: "bypass",
+        });
+      } catch (error) {
+        mockWorkerPromise = null;
+        throw error;
+      }
     })();
   }
 

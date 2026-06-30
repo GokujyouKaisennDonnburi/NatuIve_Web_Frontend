@@ -49,6 +49,12 @@ const sampleUserProfiles = [
     avatarUrl: "",
     bio: "海沿いのクリーン活動をメインに活動しています。",
   },
+  {
+    id: "mock-access-token", // モック環境でのテスト用
+    displayName: "モックユーザー",
+    avatarUrl: "https://example.com/avatar.jpg",
+    bio: "モック環境でのテスト用プロフィールです。",
+  },
 ];
 
 // ユーザー別イベント用ダミーデータ

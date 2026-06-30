@@ -2,6 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, MapPin, User } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export type EventItem = {
@@ -63,9 +64,11 @@ export function EventCard({ event }: EventCardProps) {
               <span className="flex items-center gap-1 font-medium text-slate-500">
                 {/* アバター画像があれば表示し、なければデフォルトのUserアイコンを表示 */}
                 {event.hostAvatarUrl ? (
-                  <img
+                  <Image
                     src={event.hostAvatarUrl}
                     alt=""
+                    width={12}
+                    height={12}
                     className="h-3 w-3 rounded-full object-cover"
                   />
                 ) : (

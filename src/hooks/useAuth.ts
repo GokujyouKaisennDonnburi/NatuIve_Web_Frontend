@@ -1,10 +1,16 @@
 // src/hooks/useAuth.ts
 "use client";
 
-import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { signInWithGoogle, signOut } from "@/services/auth";
+import {
+  getMockAuthSession,
+  isMockAuthEnabled,
+  subscribeMockAuthSession,
+  syncMockWorker,
+} from "@/services/mockAuth";
 import type { AuthSession } from "@/types/common";
+import { useEffect, useState } from "react";
 
 // Supabaseのユーザーメタデータの型定義
 type SupabaseUserMetadata = {
@@ -39,7 +45,53 @@ export function useAuth() {
   const [session, setSession] = useState<AuthSession | null>(null); // 認証セッションの状態を保持するステート
   const [isLoading, setIsLoading] = useState(true); // 認証状態のロード中かどうかを示すステート
 
+  // useEffectフックを使用して認証状態の変化を監視
   useEffect(() => {
+    // モック認証が有効な場合の処理
+    if (isMockAuthEnabled()) {
+      let cancelled = false;
+
+      // モック認証のセッションを同期し、失敗してもローディングを解除する
+      void (async () => {
+        // モックワーカーを同期する
+        try {
+          await syncMockWorker(true);
+
+          if (cancelled) {
+            return;
+          }
+
+          setSession(getMockAuthSession());
+        } catch {
+          if (cancelled) {
+            return;
+          }
+
+          setSession(getMockAuthSession());
+        } finally {
+          // ローディング状態を解除する
+          if (!cancelled) {
+            setIsLoading(false);
+          }
+        }
+      })();
+
+      // モック認証のセッション変更を購読し、セッションが変化したらステートを更新する
+      const unsubscribe = subscribeMockAuthSession(() => {
+        if (cancelled) {
+          return;
+        }
+
+        setSession(getMockAuthSession());
+        setIsLoading(false);
+      });
+
+      return () => {
+        cancelled = true;
+        unsubscribe();
+      };
+    }
+
     // 初期セッション確認
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {

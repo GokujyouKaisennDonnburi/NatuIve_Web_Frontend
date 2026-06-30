@@ -1,6 +1,10 @@
 import { HttpResponse, http } from "msw";
 
-// ダミーユーザーデータを生成
+// ============================================
+// ユーザー系モックのダミーデータと補助関数
+// ============================================
+
+// ダミーユーザーデータ（GET /api/users で返すサンプルユーザー一覧）
 const sampleUsers = [
   {
     id: "user-1",
@@ -19,26 +23,28 @@ const sampleUsers = [
   },
 ];
 
-// ダミーの現在のユーザー情報
+// ダミーの現在のユーザー情報（GET /api/v1/me で返すモックユーザープロフィール）
 const sampleCurrentUser = {
   id: "user-1",
   email: "aoi@example.com",
-  display_name: "Aoi Tanaka",
-  avatar_url: "https://example.com/avatar.jpg",
-  created_at: "2026-06-24T10:00:00Z",
-  updated_at: "2026-06-24T10:00:00Z",
+  displayName: "Aoi Tanaka",
+  avatarUrl: "https://example.com/avatar.jpg",
+  createdAt: "2026-06-24T10:00:00Z",
+  updatedAt: "2026-06-24T10:00:00Z",
 };
 
-// 認証トークンが有効かどうかをチェックする関数
+// 認証トークンが有効かどうかをチェックする補助関数
+// （Bearer トークンが付与されているかを確認するのに使用）
 const hasBearerToken = (authorizationHeader: string | null) =>
   Boolean(authorizationHeader?.startsWith("Bearer "));
 
 // MSWのハンドラーを定義
 export const userHandlers = [
-  // 既存のユーザー一覧取得モック
+  // ユーザー一覧取得モック
   http.get("/api/users", () => {
     return HttpResponse.json({ users: sampleUsers });
   }),
+
   // 現在のユーザー情報取得モック
   http.get("/api/v1/me", ({ request }) => {
     // 認証トークンが無効な場合は401エラーを返す

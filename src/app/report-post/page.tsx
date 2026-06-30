@@ -358,6 +358,7 @@ export default function ReportPostPage() {
             {/* フッター */}
             <CardFooter className="border-t border-slate-200 flex gap-3 pt-6">
               <Button
+                className="cursor-pointer"
                 type="button"
                 variant="outline"
                 onClick={() => router.back()}

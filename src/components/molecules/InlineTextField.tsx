@@ -33,7 +33,7 @@ export function InlineTextField({
       setValue(initialValue);
       return;
     }
-    
+
     setIsLoading(true);
     try {
       await onSave(value);
@@ -62,10 +62,22 @@ export function InlineTextField({
           autoFocus
         />
         {/* disabledはローディング中、または「空欄」の時のみ（変更がなくても押せる） */}
-        <Button size="icon" variant="ghost" onClick={handleSave} disabled={isLoading || !value.trim()} className="h-8 w-8 text-emerald-600 hover:text-emerald-700">
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={handleSave}
+          disabled={isLoading || !value.trim()}
+          className="h-8 w-8 text-emerald-600 hover:text-emerald-700"
+        >
           <Check className="w-4 h-4" />
         </Button>
-        <Button size="icon" variant="ghost" onClick={handleCancel} disabled={isLoading} className="h-8 w-8 text-slate-500 hover:text-slate-700">
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={handleCancel}
+          disabled={isLoading}
+          className="h-8 w-8 text-slate-500 hover:text-slate-700"
+        >
           <X className="w-4 h-4" />
         </Button>
       </div>

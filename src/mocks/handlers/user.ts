@@ -115,8 +115,8 @@ export const userHandlers = [
   http.get("/api/v1/users/:id", ({ params }) => {
     const { id } = params;
     // idが存在することを保証（文字列型にキャスト）
-    const userId = typeof id === 'string' ? id : 'unknown';
-    
+    const userId = typeof id === "string" ? id : "unknown";
+
     // まずは事前定義されたモックデータ(user-1, user-2)を探す
     const user = sampleUserProfiles.find((u) => u.id === userId);
 
@@ -151,19 +151,22 @@ export const userHandlers = [
   // 1. プロフィールテキスト情報（名前・自己紹介）の更新 (PATCH)
   http.patch("/api/v1/users/:id", async ({ request, params }) => {
     // 疑似的なネットワーク遅延（1秒）を発生させて、保存中のUIを確認できるようにする
-    await delay(1000); 
+    await delay(1000);
 
     try {
       const body = await request.json();
-      
+
       // 実際はここでデータベースを更新しますが、今回はモックなので成功レスポンスを返すだけ
-      return HttpResponse.json({ 
-        success: true, 
+      return HttpResponse.json({
+        success: true,
         message: "プロフィールを更新しました",
-        updatedData: body 
+        updatedData: body,
       });
     } catch (error) {
-      return HttpResponse.json({ error: "無効なリクエストです" }, { status: 400 });
+      return HttpResponse.json(
+        { error: "無効なリクエストです" },
+        { status: 400 },
+      );
     }
   }),
 
@@ -173,16 +176,15 @@ export const userHandlers = [
     await delay(1500);
 
     const { id } = params;
-    
+
     // 実際は送信された FormData からファイルを取り出し、S3などにアップロードします。
     // 今回はモックとして、「更新されるたびに違う画像が返ってくる」ように
     // 現在のタイムスタンプをシード値にしたダミーの画像URLを生成して返します。
     const newAvatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${id}-${Date.now()}`;
 
-    return HttpResponse.json({ 
+    return HttpResponse.json({
       success: true,
-      avatarUrl: newAvatarUrl 
+      avatarUrl: newAvatarUrl,
     });
   }),
-
 ];

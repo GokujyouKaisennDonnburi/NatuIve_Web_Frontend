@@ -32,7 +32,7 @@ export function InlineTextareaField({
       setIsEditing(false);
       return;
     }
-    
+
     setIsLoading(true);
     try {
       await onSave(value);
@@ -62,10 +62,22 @@ export function InlineTextareaField({
         />
         <div className="flex justify-end gap-1">
           {/* 変更がなくても押せるように統一 */}
-          <Button size="icon" variant="ghost" onClick={handleSave} disabled={isLoading} className="h-8 w-8 text-emerald-600 hover:text-emerald-700">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={handleSave}
+            disabled={isLoading}
+            className="h-8 w-8 text-emerald-600 hover:text-emerald-700"
+          >
             <Check className="w-4 h-4" />
           </Button>
-          <Button size="icon" variant="ghost" onClick={handleCancel} disabled={isLoading} className="h-8 w-8 text-slate-500 hover:text-slate-700">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={handleCancel}
+            disabled={isLoading}
+            className="h-8 w-8 text-slate-500 hover:text-slate-700"
+          >
             <X className="w-4 h-4" />
           </Button>
         </div>
@@ -75,7 +87,7 @@ export function InlineTextareaField({
 
   if (!initialValue && isEditable) {
     return (
-      <button 
+      <button
         type="button"
         onClick={() => setIsEditing(true)}
         className="text-sm text-slate-400 hover:text-slate-600 flex items-center gap-1 transition-colors"
@@ -87,9 +99,7 @@ export function InlineTextareaField({
 
   return (
     <div className={`group relative pr-8 ${className}`}>
-      <p className={`whitespace-pre-wrap ${textClassName}`}>
-        {initialValue}
-      </p>
+      <p className={`whitespace-pre-wrap ${textClassName}`}>{initialValue}</p>
       {isEditable && (
         <Button
           size="icon"

@@ -80,6 +80,7 @@ export function EditableAvatar({
       {/* 右下の鉛筆バッジを常時表示 */}
       {isEditable && !isUploading && (
         <button
+          type="button"
           onClick={handleClick}
           className="absolute -bottom-1 -right-1 bg-white p-1.5 rounded-full border border-slate-200 shadow-sm text-slate-400 hover:text-emerald-600 hover:bg-slate-50 transition-colors"
           aria-label="アイコンを編集する"

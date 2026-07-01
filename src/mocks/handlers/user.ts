@@ -181,24 +181,4 @@ export const userHandlers = [
     }
   }),
 
-  // 2. アイコン画像のアップロード・更新 (POST)
-  http.post("/api/v1/users/:id/avatar", async ({ params }) => {
-    await delay(1500);
-
-    const { id } = params;
-    const userId = typeof id === "string" ? id : "unknown";
-
-    const newAvatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userId)}-${Date.now()}`;
-
-    // モックデータベースのアイコンURLを書き換える
-    const userIndex = sampleUserProfiles.findIndex((u) => u.id === userId);
-    if (userIndex !== -1) {
-      sampleUserProfiles[userIndex].avatarUrl = newAvatarUrl;
-    }
-
-    return HttpResponse.json({
-      success: true,
-      avatarUrl: newAvatarUrl,
-    });
-  }),
 ];

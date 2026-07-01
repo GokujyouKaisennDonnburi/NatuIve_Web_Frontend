@@ -1,6 +1,5 @@
 "use client";
 
-import { EditableAvatar } from "@/components/molecules/EditableAvatar";
 import { InlineTextField } from "@/components/molecules/InlineTextField";
 import { InlineTextareaField } from "@/components/molecules/InlineTextareaField";
 
@@ -12,7 +11,6 @@ type ProfileHeaderProps = {
   // 保存時に実行される関数を親から受け取る
   onUpdateName?: (newName: string) => Promise<void>;
   onUpdateBio?: (newBio: string) => Promise<void>;
-  onUpdateAvatar?: (file: File) => Promise<void>;
 };
 
 export function ProfileHeader({
@@ -22,7 +20,6 @@ export function ProfileHeader({
   isOwnProfile,
   onUpdateName,
   onUpdateBio,
-  onUpdateAvatar,
 }: ProfileHeaderProps) {
   // 保存関数が渡されていない場合のフォールバック（エラー防止）
   const defaultOnSave = async () => {};
@@ -30,12 +27,10 @@ export function ProfileHeader({
   return (
     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 bg-white rounded-xl border border-slate-200/80 shadow-sm">
       {/* 1. アイコン領域 */}
-      <EditableAvatar
-        name={name}
-        avatarUrl={avatarUrl}
-        isEditable={isOwnProfile}
-        onSave={onUpdateAvatar || defaultOnSave}
-        className="w-20 h-20 sm:w-24 sm:h-24"
+      <img
+          src={avatarUrl}
+          alt={`${name}のアイコン`}
+          className="w-full h-full object-cover"
       />
 
       {/* 2. ユーザー情報・自己紹介領域 */}

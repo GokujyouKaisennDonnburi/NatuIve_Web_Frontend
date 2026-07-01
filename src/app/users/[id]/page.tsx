@@ -154,38 +154,6 @@ export default function UserProfilePage(props: PageProps) {
     setProfile((prev) => (prev ? { ...prev, bio: newBio } : null));
   };
 
-  const handleUpdateAvatar = async (file: File) => {
-    // 画像はFormDataに入れて送信する
-    const formData = new FormData();
-    formData.append("avatar", file);
-
-    // 画像アップロード用のエンドポイントに送信
-    const res = await fetch(`/api/v1/users/${userId}/avatar`, {
-      method: "POST",
-      body: formData, // FormDataをそのまま送付
-    });
-
-    if (!res.ok) throw new Error("アイコンの更新に失敗しました");
-
-    // モックAPIから返ってきた新しい画像URLを画面に反映
-    const data = await res.json();
-    setProfile((prev) =>
-      prev ? { ...prev, avatarUrl: data.avatarUrl } : null,
-    );
-  };
-
-  // 404エラー時
-  if (isNotFound || !profile) {
-    return (
-      <div className="min-h-screen bg-slate-50/60 flex flex-col items-center justify-center gap-4">
-        <p className="text-slate-500">ユーザーが見つかりませんでした。</p>
-        <Link href="/" className="text-emerald-600 hover:underline">
-          ホームに戻る
-        </Link>
-      </div>
-    );
-  }
-
   // 自分のプロフィールかどうかの判定フラグ
   const isOwnProfile = currentUserId === userId;
 
@@ -214,7 +182,6 @@ export default function UserProfilePage(props: PageProps) {
           isOwnProfile={isOwnProfile}
           onUpdateName={handleUpdateName}
           onUpdateBio={handleUpdateBio}
-          onUpdateAvatar={handleUpdateAvatar}
         />
         <UserEventTabs
           hostedEvents={hostedEvents}

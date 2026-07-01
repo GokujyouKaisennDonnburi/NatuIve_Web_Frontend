@@ -2,6 +2,8 @@
 
 import { InlineTextField } from "@/components/molecules/InlineTextField";
 import { InlineTextareaField } from "@/components/molecules/InlineTextareaField";
+import { User } from "lucide-react";
+import { useState } from "react";
 
 type ProfileHeaderProps = {
   name: string;
@@ -21,17 +23,28 @@ export function ProfileHeader({
   onUpdateName,
   onUpdateBio,
 }: ProfileHeaderProps) {
+  // 画像読み込みエラー状態の管理
+  const [imgError, setImgError] = useState(false);
+
   // 保存関数が渡されていない場合のフォールバック（エラー防止）
   const defaultOnSave = async () => {};
 
   return (
     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 p-6 bg-white rounded-xl border border-slate-200/80 shadow-sm">
-      {/* 1. アイコン領域 */}
-      <img
-          src={avatarUrl}
-          alt={`${name}のアイコン`}
-          className="w-full h-full object-cover"
-      />
+      {/* 1. アイコン領域 (フォールバック対応) */}
+      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border border-slate-200 shrink-0 bg-slate-100 flex items-center justify-center text-slate-400">
+        {avatarUrl && !imgError ? (
+          <img
+            src={avatarUrl}
+            alt={`${name}のアイコン`}
+            className="w-full h-full object-cover"
+            onError={() => setImgError(true)} // 読み込み失敗時にエラー状態をtrueにする
+          />
+        ) : (
+          // 画像がない、またはエラーの時はデフォルトアイコンを表示
+          <User className="w-10 h-10 sm:w-12 sm:h-12" />
+        )}
+      </div>
 
       {/* 2. ユーザー情報・自己紹介領域 */}
       <div className="flex-1 text-center sm:text-left space-y-3 w-full min-w-0">

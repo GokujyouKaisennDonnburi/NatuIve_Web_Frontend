@@ -20,7 +20,6 @@ type UserProfile = {
 };
 
 export default function UserProfilePage(props: PageProps) {
-  // Next.js 15: params を use() でアンラップ
   const params = use(props.params);
   const userId = params.id;
 
@@ -38,7 +37,6 @@ export default function UserProfilePage(props: PageProps) {
     let cancelled = false;
 
     const fetchData = async () => {
-      // セッションのロード待ち
       if (isSessionLoading) return;
 
       try {
@@ -47,7 +45,7 @@ export default function UserProfilePage(props: PageProps) {
           headers.set("Authorization", `Bearer ${session.token}`);
         }
 
-        // 1. ログイン中ユーザー情報の取得 (自分のプロフィールか判定するため)
+        // 1. ログイン中ユーザー情報の取得
         if (session?.token) {
           const meRes = await fetch("/api/v1/me", { headers });
           if (meRes.ok) {
@@ -91,7 +89,7 @@ export default function UserProfilePage(props: PageProps) {
           const data = await participatedRes.json();
           pEvents = data.events.map((e: any) => ({
             ...e,
-            hostName: "主催者", // ※参加イベントの主催者はAPI次第で調整
+            hostName: "主催者", 
             hostAvatarUrl: "",
             dateLabel: new Date(e.eventDate).toLocaleDateString("ja-JP", {
               month: "short",
@@ -128,24 +126,45 @@ export default function UserProfilePage(props: PageProps) {
     );
   }
 
+  // プロフィールが見つからなかった場合のエラーハンドリング
+  if (isNotFound || !profile) {
+    return (
+      <div className="min-h-screen bg-slate-50/60 flex flex-col items-center justify-center gap-4">
+        <p className="text-slate-500">ユーザーが見つかりませんでした。</p>
+        <Link href="/" className="text-sm text-emerald-600 hover:underline">
+          トップページに戻る
+        </Link>
+      </div>
+    );
+  }
+
+  // ヘッダーを作成する共通関数を用意
+  const getAuthHeaders = () => {
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    if (session?.token) {
+      headers["Authorization"] = `Bearer ${session.token}`;
+    }
+    return headers;
+  };
+
   const handleUpdateName = async (newName: string) => {
-    // APIを叩く処理 (PATCHメソッドで一部更新)
+    // 認証ヘッダーを付与
     const res = await fetch(`/api/v1/users/${userId}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ displayName: newName }),
     });
 
     if (!res.ok) throw new Error("名前の更新に失敗しました");
 
-    // 成功したら画面上のステート（プロフィールデータ）も更新する
     setProfile((prev) => (prev ? { ...prev, displayName: newName } : null));
   };
 
   const handleUpdateBio = async (newBio: string) => {
+    // 認証ヘッダーを付与
     const res = await fetch(`/api/v1/users/${userId}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ bio: newBio }),
     });
 
@@ -154,12 +173,10 @@ export default function UserProfilePage(props: PageProps) {
     setProfile((prev) => (prev ? { ...prev, bio: newBio } : null));
   };
 
-  // 自分のプロフィールかどうかの判定フラグ
   const isOwnProfile = currentUserId === userId;
 
   return (
     <div className="min-h-screen bg-slate-50/60 text-slate-900 antialiased">
-      {/* 戻るボタン付きヘッダー */}
       <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-xl items-center px-4">
           <Link
@@ -172,9 +189,7 @@ export default function UserProfilePage(props: PageProps) {
         </div>
       </header>
 
-      {/* メインコンテンツ */}
       <main className="mx-auto max-w-xl px-4 pt-6 pb-16 space-y-8">
-        {/* 更新用の関数をPropsとして渡す */}
         <ProfileHeader
           name={profile.displayName}
           avatarUrl={profile.avatarUrl}

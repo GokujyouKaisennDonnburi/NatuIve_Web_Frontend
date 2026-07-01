@@ -173,12 +173,13 @@ export default function ReportPostPage() {
       // レポート作成リクエストを組み立て
       const payload: CreateReportRequest = {
         eventId,
-        content: formState.externalUrlEnabled ? "" : formState.content.trim(),
-        imageObjectKeys,
+        ...(!formState.externalUrlEnabled &&
+          formState.content.trim() && { content: formState.content.trim() }),
         ...(formState.externalUrlEnabled &&
           formState.externalUrl.trim() && {
             externalUrl: formState.externalUrl.trim(),
           }),
+        ...(imageObjectKeys.length > 0 && { imageObjectKeys }),
         ...(pdfObjectKeys.length > 0 && { pdfObjectKeys }),
       };
 
@@ -268,90 +269,93 @@ export default function ReportPostPage() {
                 <>
                   {/* 活動記録テキスト */}
                   <div className="space-y-2">
-                <label
-                  htmlFor="content"
-                  className="block text-sm font-semibold text-slate-800"
-                >
-                  活動した記録 <span className="text-red-600">*</span>
-                </label>
-                <FieldNote>
-                  イベント参加時に行った活動内容を詳しく記述してください
-                </FieldNote>
-                <Textarea
-                  id="content"
-                  placeholder="例：〇〇について学びました。特に〇〇の部分が印象的でした..."
-                  value={formState.content}
-                  onChange={(e) =>
-                    setFormState((prev) => ({
-                      ...prev,
-                      content: e.target.value,
-                    }))
-                  }
-                  className="min-h-32 resize-none"
-                />
-                {validationErrors.content && (
-                  <FieldNote tone="error">{validationErrors.content}</FieldNote>
-                )}
-                <FieldNote>{formState.content.length} / 2000 文字</FieldNote>
-              </div>
+                    <label
+                      htmlFor="content"
+                      className="block text-sm font-semibold text-slate-800"
+                    >
+                      活動した記録 <span className="text-red-600">*</span>
+                    </label>
+                    <FieldNote>
+                      イベント参加時に行った活動内容を詳しく記述してください
+                    </FieldNote>
+                    <Textarea
+                      id="content"
+                      placeholder="例：〇〇について学びました。特に〇〇の部分が印象的でした..."
+                      value={formState.content}
+                      onChange={(e) =>
+                        setFormState((prev) => ({
+                          ...prev,
+                          content: e.target.value,
+                        }))
+                      }
+                      className="min-h-32 resize-none"
+                    />
+                    {validationErrors.content && (
+                      <FieldNote tone="error">
+                        {validationErrors.content}
+                      </FieldNote>
+                    )}
+                    <FieldNote>
+                      {formState.content.length} / 2000 文字
+                    </FieldNote>
+                  </div>
 
-              {/* 区切り線 */}
-              <div className="border-t border-slate-200" />
+                  {/* 区切り線 */}
+                  <div className="border-t border-slate-200" />
 
-              {/* 画像セクション */}
-              <div>
-                <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-                  <ImageIcon className="h-5 w-5 text-teal-600" />
-                  <span>活動している様子の画像</span>
-                </div>
-                <MultiFileField
-                  id="report-images"
-                  label="画像を選択"
-                  hint="活動の様子が分かる画像があれば添付してください（最大10枚）"
-                  accept="image/*"
-                  selectedFiles={formState.reportImages}
-                  onSelectedFilesChange={(files) =>
-                    setFormState((prev) => ({
-                      ...prev,
-                      reportImages: files,
-                    }))
-                  }
-                  maxFiles={10}
-                  className="mt-4"
-                  error={validationErrors.reportImages}
-                  disabled={formState.externalUrlEnabled}
-                />
-              </div>
+                  {/* 画像セクション */}
+                  <div>
+                    <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+                      <ImageIcon className="h-5 w-5 text-teal-600" />
+                      <span>活動している様子の画像</span>
+                    </div>
+                    <MultiFileField
+                      id="report-images"
+                      label="画像を選択"
+                      hint="活動の様子が分かる画像があれば添付してください（最大10枚）"
+                      accept="image/*"
+                      selectedFiles={formState.reportImages}
+                      onSelectedFilesChange={(files) =>
+                        setFormState((prev) => ({
+                          ...prev,
+                          reportImages: files,
+                        }))
+                      }
+                      maxFiles={10}
+                      className="mt-4"
+                      error={validationErrors.reportImages}
+                      disabled={formState.externalUrlEnabled}
+                    />
+                  </div>
 
-              {/* 区切り線 */}
-              <div className="border-t border-slate-200" />
+                  {/* 区切り線 */}
+                  <div className="border-t border-slate-200" />
 
                   {/* PDF */}
                   <div>
-                <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-                  <FileText className="h-5 w-5 text-teal-600" />
-                  <span>資料PDF</span>
-                </div>
-                <MultiFileField
-                  id="report-pdfs"
-                  label="PDF資料"
-                  hint="学習資料やレポート用紙などのPDFがあれば、3つまでアップロード可能です"
-                  accept="application/pdf"
-                  selectedFiles={formState.reportPdfs}
-                  onSelectedFilesChange={(files) =>
-                    setFormState((prev) => ({
-                      ...prev,
-                      reportPdfs: files,
-                    }))
-                  }
-                  maxFiles={3}
-                  className="mt-4"
-                  error={validationErrors.reportPdfs}
-                />
+                    <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+                      <FileText className="h-5 w-5 text-teal-600" />
+                      <span>資料PDF</span>
+                    </div>
+                    <MultiFileField
+                      id="report-pdfs"
+                      label="PDF資料"
+                      hint="学習資料やレポート用紙などのPDFがあれば、3つまでアップロード可能です"
+                      accept="application/pdf"
+                      selectedFiles={formState.reportPdfs}
+                      onSelectedFilesChange={(files) =>
+                        setFormState((prev) => ({
+                          ...prev,
+                          reportPdfs: files,
+                        }))
+                      }
+                      maxFiles={3}
+                      className="mt-4"
+                      error={validationErrors.reportPdfs}
+                    />
                   </div>
                 </>
               ) : null}
-                           
             </CardContent>
 
             {/* フッター */}

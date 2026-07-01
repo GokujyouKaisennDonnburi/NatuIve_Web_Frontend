@@ -27,9 +27,8 @@ export function TogglePill({
     >
       <span
         className={cn(
-          "absolute left-2 text-[10px] font-semibold tracking-wide opacity-0 transition-opacity duration-200",
-          !checked && "opacity-100 text-slate-800",
-          checked && "opacity-100 text-white",
+          "absolute left-2 text-[10px] font-semibold tracking-wide transition-opacity duration-200 text-white",
+          checked ? "opacity-100" : "opacity-0",
         )}
       >
         OFF
@@ -42,9 +41,8 @@ export function TogglePill({
       />
       <span
         className={cn(
-          "absolute right-2 text-[10px] font-semibold tracking-wide opacity-0 transition-opacity duration-200",
-          !checked && "opacity-100 text-slate-900",
-          checked && "text-slate-800",
+          "absolute right-2 text-[10px] font-semibold tracking-wide transition-opacity duration-200 text-slate-800",
+          checked ? "opacity-0" : "opacity-100",
         )}
       >
         ON

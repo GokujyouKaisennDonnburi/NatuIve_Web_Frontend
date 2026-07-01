@@ -38,10 +38,12 @@ export function EditableAvatar({
     setIsUploading(true);
     try {
       await onSave(file);
+      setPreviewUrl(null);
     } catch (error) {
       console.error("画像の保存に失敗しました", error);
       setPreviewUrl(null);
     } finally {
+      URL.revokeObjectURL(objectUrl);
       setIsUploading(false);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";

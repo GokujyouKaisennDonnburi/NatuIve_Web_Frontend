@@ -72,7 +72,7 @@ export type EventDetailResponse = {
   createdAt: string;
   description: string;
   eventDate: string;
-  externalUrl: string;
+  externalUrl?: string;
   id: string;
   imageObjectKeys: string[];
   imageUrls: string[];

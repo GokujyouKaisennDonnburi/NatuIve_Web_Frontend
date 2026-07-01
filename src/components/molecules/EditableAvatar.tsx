@@ -2,6 +2,7 @@
 
 import { GlobalUserAvatar } from "@/components/molecules/GlobalUserAvatar";
 import { Loader2, Pencil } from "lucide-react"; // CameraからPencilに変更
+import type * as React from "react";
 import { useRef, useState } from "react";
 
 type EditableAvatarProps = {

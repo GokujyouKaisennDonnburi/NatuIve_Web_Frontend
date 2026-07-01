@@ -63,6 +63,8 @@ export function InlineTextField({
         />
         {/* disabledはローディング中、または「空欄」の時のみ（変更がなくても押せる） */}
         <Button
+          type="button"
+          aria-label="保存する"
           size="icon"
           variant="ghost"
           onClick={handleSave}
@@ -72,6 +74,8 @@ export function InlineTextField({
           <Check className="w-4 h-4" />
         </Button>
         <Button
+          type="button"
+          aria-label="キャンセルする"
           size="icon"
           variant="ghost"
           onClick={handleCancel}

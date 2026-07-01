@@ -71,7 +71,7 @@ export function EventDetail({ event }: { event: EventDetailType }) {
 
       {/* 添付資料（PDF） */}
       <EventPdfList
-        pdfObjectKeys={
+        pdfSources={
           event.pdfUrls?.length ? event.pdfUrls : (event.pdfObjectKeys ?? [])
         }
       />

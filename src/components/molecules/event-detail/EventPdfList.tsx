@@ -4,13 +4,13 @@ import { Download, FileText } from "lucide-react";
 
 // 添付資料（PDF）リストコンポーネントのプロパティ型定義
 type EventPdfListProps = {
-  pdfObjectKeys: string[];
+  pdfSources: string[];
 };
 
 // 添付資料（PDF）リストコンポーネント
-export function EventPdfList({ pdfObjectKeys }: Readonly<EventPdfListProps>) {
+export function EventPdfList({ pdfSources }: Readonly<EventPdfListProps>) {
   // PDFが存在しない場合は何も表示しない
-  if (pdfObjectKeys.length === 0) {
+  if (pdfSources.length === 0) {
     return null;
   }
 
@@ -24,7 +24,7 @@ export function EventPdfList({ pdfObjectKeys }: Readonly<EventPdfListProps>) {
 
         {/* PDFリストの表示 */}
         <div className="space-y-2">
-          {pdfObjectKeys.map((url) => (
+          {pdfSources.map((url) => (
             <a
               key={url}
               href={normalizeAssetUrl(url)}

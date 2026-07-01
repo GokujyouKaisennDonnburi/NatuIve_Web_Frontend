@@ -35,7 +35,9 @@ type MockEventDetail = MockEvent & {
   externalUrl?: string;
   costs: { category: string; cost: number }[];
   items?: { item: string; isRequired: boolean }[];
+  imageUrls?: string[];
   imageObjectKeys?: string[];
+  pdfUrls?: string[];
   pdfObjectKeys?: string[];
 };
 
@@ -104,7 +106,15 @@ const createDefaultMockEventDetail = (
     `https://picsum.photos/1200/600?random=${index * 3 + 2}`,
     `https://picsum.photos/1200/600?random=${index * 3 + 3}`,
   ],
+  imageUrls: [
+    `https://picsum.photos/1200/600?random=${index * 3 + 1}`,
+    `https://picsum.photos/1200/600?random=${index * 3 + 2}`,
+    `https://picsum.photos/1200/600?random=${index * 3 + 3}`,
+  ],
   pdfObjectKeys: [
+    "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+  ],
+  pdfUrls: [
     "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
   ],
 });
@@ -301,7 +311,17 @@ export const eventHandlers = [
             (value): value is string => typeof value === "string",
           )
         : undefined,
+      imageUrls: Array.isArray(body.imageObjectKeys)
+        ? body.imageObjectKeys.filter(
+            (value): value is string => typeof value === "string",
+          )
+        : undefined,
       pdfObjectKeys: Array.isArray(body.pdfObjectKeys)
+        ? body.pdfObjectKeys.filter(
+            (value): value is string => typeof value === "string",
+          )
+        : undefined,
+      pdfUrls: Array.isArray(body.pdfObjectKeys)
         ? body.pdfObjectKeys.filter(
             (value): value is string => typeof value === "string",
           )

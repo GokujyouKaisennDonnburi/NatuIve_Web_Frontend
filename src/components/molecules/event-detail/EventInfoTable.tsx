@@ -7,8 +7,10 @@ type EventInfoTableProps = {
     EventDetailType,
     | "organizerName"
     | "organizerAvatarUrl"
+    | "profile"
     | "eventDate"
     | "location"
+    | "externalUrl"
     | "costs"
     | "items"
     | "capacity"
@@ -17,6 +19,8 @@ type EventInfoTableProps = {
 
 // イベント情報表コンポーネント
 export function EventInfoTable({ event }: Readonly<EventInfoTableProps>) {
+  const organizerName = event.profile?.displayName ?? event.organizerName;
+
   return (
     <Card>
       <CardContent>
@@ -32,7 +36,7 @@ export function EventInfoTable({ event }: Readonly<EventInfoTableProps>) {
                   </th>
                   <td className="border-l  border-t border-slate-200 bg-white px-4 py-4 text-slate-800">
                     <span className="text-sm font-medium text-slate-800">
-                      {event.organizerName ?? "未設定"}
+                      {organizerName ?? "未設定"}
                     </span>
                   </td>
                 </tr>
@@ -63,6 +67,17 @@ export function EventInfoTable({ event }: Readonly<EventInfoTableProps>) {
                     {event.location}
                   </td>
                 </tr>
+
+                {event.externalUrl ? (
+                  <tr>
+                    <th className="w-44 border-t border-slate-200 py-4 px-4 text-left align-top bg-emerald-500 text-sm font-semibold text-white">
+                      関連URL
+                    </th>
+                    <td className="border-l border-t border-slate-200 bg-white px-4 py-4 text-slate-800">
+                      {event.externalUrl}
+                    </td>
+                  </tr>
+                ) : null}
 
                 {/* 参加費 */}
                 <tr>

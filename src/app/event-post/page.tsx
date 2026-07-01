@@ -380,9 +380,8 @@ export default function EventPostPage() {
           {/* フォームの送信イベントをhandleSubmitにバインド */}
           <form onSubmit={handleSubmit} noValidate className="space-y-8">
             <CardContent className="space-y-8 pt-6">
-              {!formState.applicationUrlEnabled ? (
-                <>
-                  <div className="grid gap-6">
+              <>
+                <div className="grid gap-6">
                     {/* イベントの基本情報入力セクション */}
                     <SectionHeading
                       eyebrow="Basic Info"
@@ -625,12 +624,7 @@ export default function EventPostPage() {
                       />
                     </FormField>
                   </div>
-                </>
-              ) : (
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 text-sm text-emerald-700">
-                  外部URLを使う場合は、他の入力欄は表示されません。URLだけを入力してください。
-                </div>
-              )}
+              </>
 
               {/* 外部URLの入力セクション */}
               <OptionalUrlField

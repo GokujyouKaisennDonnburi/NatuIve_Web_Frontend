@@ -85,13 +85,24 @@ export function MultiFileField({
     const files = Array.from(event.target.files ?? []);
     if (files.length === 0) return;
 
-    const newFiles = files.map((file) => {
+    // 残り追加可能数を計算し、それ以上は追加しない
+    const remaining = Math.max(0, maxFiles - selectedFiles.length);
+    if (remaining === 0) {
+      // 追加できる枠がない場合は入力をリセットして何もしない
+      event.target.value = "";
+      return;
+    }
+
+    const filesToAdd = files.slice(0, remaining);
+
+    const newFiles = filesToAdd.map((file) => {
       const fileWithId = file as FileWithId;
       fileWithId.id = crypto.randomUUID();
       return fileWithId;
     });
 
     onSelectedFilesChange([...selectedFiles, ...newFiles]);
+    // 同名ファイル再選択を可能にするために input をリセット
     event.target.value = "";
   };
 

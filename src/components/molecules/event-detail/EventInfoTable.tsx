@@ -68,17 +68,6 @@ export function EventInfoTable({ event }: Readonly<EventInfoTableProps>) {
                   </td>
                 </tr>
 
-                {event.externalUrl ? (
-                  <tr>
-                    <th className="w-44 border-t border-slate-200 py-4 px-4 text-left align-top bg-emerald-500 text-sm font-semibold text-white">
-                      関連URL
-                    </th>
-                    <td className="border-l border-t border-slate-200 bg-white px-4 py-4 text-slate-800">
-                      {event.externalUrl}
-                    </td>
-                  </tr>
-                ) : null}
-
                 {/* 参加費 */}
                 <tr>
                   <th className="w-44 border-t border-slate-200 py-4 px-4 text-left align-top bg-emerald-500 text-sm font-semibold text-white">

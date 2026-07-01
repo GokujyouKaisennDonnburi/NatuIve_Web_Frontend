@@ -11,12 +11,12 @@
 
 - 新しい設計より既存実装を優先する
 - 再利用可能なコンポーネントを優先する( Atomic Design )
-- architecture.md を参照する
-- coding-rules.md を参照する
+- [docs/architecture.md](docs/architecture.md) を参照する
+- [docs/coding-rules.md](docs/coding-rules.md) を参照する
 
 ## 危険な操作
 
-以下は必ず確認を取る
+以下は必ず事前に確認を取ってください。
 
 - install
 - update

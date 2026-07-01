@@ -150,41 +150,52 @@ export const userHandlers = [
 
   // 1. プロフィールテキスト情報（名前・自己紹介）の更新 (PATCH)
   http.patch("/api/v1/users/:id", async ({ request, params }) => {
-    // 疑似的なネットワーク遅延（1秒）を発生させて、保存中のUIを確認できるようにする
-    await delay(1000);
+    await delay(1000); 
 
     try {
-      const body = await request.json();
+      const body = await request.json() as any;
+      const { id } = params;
+      const userId = typeof id === 'string' ? id : 'unknown';
+      
+      // モックデータベース（配列）から該当ユーザーを探して直接書き換える
+      const userIndex = sampleUserProfiles.findIndex((u) => u.id === userId);
+      if (userIndex !== -1) {
+        if (body.displayName !== undefined) {
+          sampleUserProfiles[userIndex].displayName = body.displayName;
+        }
+        if (body.bio !== undefined) {
+          sampleUserProfiles[userIndex].bio = body.bio;
+        }
+      }
 
-      // 実際はここでデータベースを更新しますが、今回はモックなので成功レスポンスを返すだけ
-      return HttpResponse.json({
-        success: true,
+      return HttpResponse.json({ 
+        success: true, 
         message: "プロフィールを更新しました",
-        updatedData: body,
+        updatedData: body 
       });
-    } catch (_error) {
-      return HttpResponse.json(
-        { error: "無効なリクエストです" },
-        { status: 400 },
-      );
+    } catch (error) {
+      return HttpResponse.json({ error: "無効なリクエストです" }, { status: 400 });
     }
   }),
 
   // 2. アイコン画像のアップロード・更新 (POST)
   http.post("/api/v1/users/:id/avatar", async ({ params }) => {
-    // 画像アップロードは少し時間がかかる想定（1.5秒）
     await delay(1500);
 
     const { id } = params;
-
-    // 実際は送信された FormData からファイルを取り出し、S3などにアップロードします。
-    // 今回はモックとして、「更新されるたびに違う画像が返ってくる」ように
-    // 現在のタイムスタンプをシード値にしたダミーの画像URLを生成して返します。
+    const userId = typeof id === 'string' ? id : 'unknown';
+    
     const newAvatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${id}-${Date.now()}`;
 
-    return HttpResponse.json({
+    // モックデータベースのアイコンURLを書き換える
+    const userIndex = sampleUserProfiles.findIndex((u) => u.id === userId);
+    if (userIndex !== -1) {
+      sampleUserProfiles[userIndex].avatarUrl = newAvatarUrl;
+    }
+
+    return HttpResponse.json({ 
       success: true,
-      avatarUrl: newAvatarUrl,
+      avatarUrl: newAvatarUrl 
     });
   }),
 ];

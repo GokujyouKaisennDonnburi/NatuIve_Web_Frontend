@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Check, Pencil, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type InlineTextFieldProps = {
   value: string;
@@ -26,6 +26,9 @@ export function InlineTextField({
   const [value, setValue] = useState(initialValue);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    if (!isEditing) setValue(initialValue);
+  }, [initialValue, isEditing]);
   const handleSave = async () => {
     // 空欄、または変更がない場合は何もしない（元の値に戻して閉じる）
     if (!value.trim() || value === initialValue) {

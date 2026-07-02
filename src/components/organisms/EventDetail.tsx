@@ -3,6 +3,7 @@
 import { EventImageCarousel } from "@/components/molecules/event-detail/EventImageCarousel";
 import { EventInfoTable } from "@/components/molecules/event-detail/EventInfoTable";
 import { EventPdfList } from "@/components/molecules/event-detail/EventPdfList";
+import { EventReportList } from "@/components/molecules/event-detail/EventReportList";
 import type { EventDetailType } from "@/components/molecules/event-detail/types";
 import { GlobalUserAvatar } from "@/components/molecules/GlobalUserAvatar";
 import { EventParticipationButton } from "@/components/organisms/EventParticipationButton";
@@ -104,6 +105,9 @@ export function EventDetail({ event }: { event: EventDetailType }) {
           filename: event.pdfFilenames?.[index] ?? "",
         }))}
       />
+
+      {/* レポート一覧 */}
+      <EventReportList reports={event.reports} />
 
       {/* 参加申し込みボタン（主催者自身のイベントでは非表示） */}
       {/* スクロール中も画面下部に固定で表示する */}

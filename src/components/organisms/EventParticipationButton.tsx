@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { participateEvent } from "@/services/participate";
 import { fetchCurrentUser } from "@/services/user";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { toast } from "sonner";
 
 type EventParticipationButtonProps = {
@@ -104,15 +104,28 @@ const GuestParticipationModal = ({
   const emailId = useId();
   const nameId = useId();
 
+  // 未ログイン時のメールアドレス入力欄の参照を保持する
+  const emailRef = useRef<HTMLInputElement>(null);
+
   // Escape キーでモーダルを閉じる
   useEffect(() => {
+    emailRef.current?.focus(); // メールアドレス入力欄にフォーカスする
+    document.body.style.overflow = "hidden"; // 背景のスクロールを無効化する
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" && !isSubmitting) {
         onClose();
       }
     };
+
+    // Escape キーのイベントリスナーを追加
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+
+    // クリーンアップ関数でイベントリスナーを削除
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, [isSubmitting, onClose]);
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -182,6 +195,7 @@ const GuestParticipationModal = ({
               <div className="space-y-2">
                 <Label htmlFor={emailId}>メールアドレス</Label>
                 <Input
+                  ref={emailRef}
                   id={emailId}
                   type="email"
                   autoComplete="email"

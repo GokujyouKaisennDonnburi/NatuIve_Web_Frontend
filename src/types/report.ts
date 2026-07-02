@@ -67,9 +67,4 @@ export type ReportDetail = {
 };
 
 // レポート取得 API のエラーレスポンスボディ DTO。
-export type GetReportErrorBody = {
-  error: {
-    code: string;
-    message: string;
-  };
-};
+export type GetReportErrorBody = CreateReportErrorBody;

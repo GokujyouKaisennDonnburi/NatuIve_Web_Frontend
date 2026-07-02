@@ -95,8 +95,6 @@ export function EventDetail({ event }: { event: EventDetailType }) {
       {/* イベント情報（表形式） */}
       <EventInfoTable event={event} />
 
-      <EventReportList reports={event.reports} />
-
       {/* 添付資料（PDF） */}
       <EventPdfList
         pdfItems={(event.pdfUrls?.length
@@ -107,6 +105,9 @@ export function EventDetail({ event }: { event: EventDetailType }) {
           filename: event.pdfFilenames?.[index] ?? "",
         }))}
       />
+
+      {/* レポート一覧 */}
+      <EventReportList reports={event.reports} />
 
       {/* 参加申し込みボタン（主催者自身のイベントでは非表示） */}
       {/* スクロール中も画面下部に固定で表示する */}

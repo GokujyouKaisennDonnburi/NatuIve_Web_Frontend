@@ -1,7 +1,11 @@
-import { ExternalLink, FileText, Image as ImageIcon } from "lucide-react";
+import {
+  Download,
+  ExternalLink,
+  FileText,
+  Image as ImageIcon,
+} from "lucide-react";
 import Image from "next/image";
 
-import { GlobalUserAvatar } from "@/components/molecules/GlobalUserAvatar";
 import { Card, CardContent } from "@/components/ui/card";
 import type { EventDetailReport } from "@/types/event";
 import { normalizeAssetUrl } from "@/utils/media";
@@ -24,7 +28,7 @@ export function EventReportList({ reports }: Readonly<EventReportListProps>) {
         </div>
 
         <div className="mt-4 space-y-4">
-          {reports.map((report, index) => {
+          {reports.map((report) => {
             const imageSources =
               report.imageUrls?.length && report.imageUrls.length > 0
                 ? report.imageUrls
@@ -42,7 +46,7 @@ export function EventReportList({ reports }: Readonly<EventReportListProps>) {
                 <summary className="flex cursor-pointer items-center justify-between gap-3 px-5 py-4 text-sm font-medium text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                      <span>レポート {index + 1}</span>
+                      <span>レポート</span>
                       {report.externalUrl ? (
                         <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
                           外部URL
@@ -50,7 +54,6 @@ export function EventReportList({ reports }: Readonly<EventReportListProps>) {
                       ) : null}
                     </div>
                     <div className="text-xs text-slate-500">
-                      {report.authorName ?? "投稿者不明"} ・
                       {new Date(report.createdAt).toLocaleString("ja-JP", {
                         year: "numeric",
                         month: "short",
@@ -65,29 +68,6 @@ export function EventReportList({ reports }: Readonly<EventReportListProps>) {
                 </summary>
 
                 <div className="border-t border-slate-200 bg-white px-5 py-5 text-sm text-slate-700">
-                  <div className="flex items-center gap-3 pb-4">
-                    <GlobalUserAvatar
-                      name={report.authorName}
-                      iconUrl={report.authorAvatarUrl}
-                      className="h-8 w-8 border-slate-200"
-                    />
-                    <div>
-                      <p className="text-sm font-semibold text-slate-900">
-                        {report.authorName ?? "投稿者不明"}
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        {new Date(report.createdAt).toLocaleString("ja-JP", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          timeZone: "Asia/Tokyo",
-                        })}
-                      </p>
-                    </div>
-                  </div>
-
                   {report.content ? (
                     <p className="whitespace-pre-wrap rounded-2xl bg-slate-50 px-4 py-4 text-sm leading-relaxed text-slate-800">
                       {report.content}
@@ -147,10 +127,15 @@ export function EventReportList({ reports }: Readonly<EventReportListProps>) {
                             href={normalizeAssetUrl(url)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 shadow-sm hover:border-slate-300"
+                            className="flex items-center justify-between gap-3 rounded-md border border-slate-100 bg-white px-4 py-3 shadow-sm hover:shadow-md"
                           >
-                            <span>{url.split("/").pop()}</span>
-                            <span className="text-emerald-600">表示</span>
+                            <div className="flex items-center gap-3">
+                              <FileText className="h-5 w-5 text-slate-700" />
+                              <span className="text-sm text-slate-800">
+                                {url.split("/").pop()}
+                              </span>
+                            </div>
+                            <Download className="h-4 w-4 text-emerald-600" />
                           </a>
                         ))}
                       </div>

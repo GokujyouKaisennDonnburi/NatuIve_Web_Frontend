@@ -73,6 +73,8 @@ export default function EventDetailPage() {
   useEffect(() => {
     if (!id) return;
 
+    // id 変更時に前回のレポートをクリアして表示の取り違えを防ぐ
+    setReport(null);
     let cancelled = false;
 
     const fetchReport = async (): Promise<void> => {

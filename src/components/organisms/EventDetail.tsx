@@ -3,6 +3,7 @@
 import { EventImageCarousel } from "@/components/molecules/event-detail/EventImageCarousel";
 import { EventInfoTable } from "@/components/molecules/event-detail/EventInfoTable";
 import { EventPdfList } from "@/components/molecules/event-detail/EventPdfList";
+import { EventReportList } from "@/components/molecules/event-detail/EventReportList";
 import type { EventDetailType } from "@/components/molecules/event-detail/types";
 import { GlobalUserAvatar } from "@/components/molecules/GlobalUserAvatar";
 import { EventParticipationButton } from "@/components/organisms/EventParticipationButton";
@@ -13,7 +14,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { ChevronLeft, FileText } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { EventReportList } from "../molecules/event-detail/EventReportList";
 
 // イベント詳細コンポーネント
 export function EventDetail({ event }: { event: EventDetailType }) {

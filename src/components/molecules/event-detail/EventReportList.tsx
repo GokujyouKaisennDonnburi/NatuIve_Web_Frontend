@@ -29,14 +29,15 @@ export function EventReportList({ reports }: Readonly<EventReportListProps>) {
 
         <div className="mt-4 space-y-4">
           {reports.map((report) => {
-            const imageSources =
-              report.imageUrls?.length && report.imageUrls.length > 0
-                ? report.imageUrls
-                : (report.imageObjectKeys ?? []);
-            const pdfSources =
-              report.pdfUrls?.length && report.pdfUrls.length > 0
-                ? report.pdfUrls
-                : (report.pdfObjectKeys ?? []);
+            // 画像のソースを取得
+            const imageSources = report.imageUrls?.length
+              ? report.imageUrls
+              : (report.imageObjectKeys ?? []);
+
+            // PDFのソースを取得
+            const pdfSources = report.pdfUrls?.length
+              ? report.pdfUrls
+              : (report.pdfObjectKeys ?? []);
 
             return (
               <details

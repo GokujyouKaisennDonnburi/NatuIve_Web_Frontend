@@ -1,5 +1,9 @@
 import { apiFetch } from "@/services/apiClient";
-import type { CreateReportRequest, CreateReportResponse } from "@/types/report";
+import type {
+  CreateReportErrorBody,
+  CreateReportRequest,
+  CreateReportResponse,
+} from "@/types/report";
 
 // レポート作成 API（POST /api/v1/reports）を呼ぶ（要認証）。
 //
@@ -18,7 +22,19 @@ export async function createReport(
   });
 
   if (!response.ok) {
-    throw new Error(`レポート作成に失敗しました (Status: ${response.status})`);
+    // バックエンドは { error: { code, message } } 形式でエラー詳細を返す。
+    // message を取得できれば toast 表示に活かす。取得失敗時はステータスでフォールバック。
+    let message: string | undefined;
+    try {
+      const body = (await response.json()) as CreateReportErrorBody;
+      message = body?.error?.message;
+    } catch {
+      // JSON 以外のボディは無視する
+    }
+
+    throw new Error(
+      message ?? `レポート作成に失敗しました (Status: ${response.status})`,
+    );
   }
 
   return (await response.json()) as CreateReportResponse;

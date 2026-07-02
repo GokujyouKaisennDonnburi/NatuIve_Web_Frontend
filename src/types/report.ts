@@ -9,8 +9,8 @@ export type CreateReportRequest = {
   // 活動記録の文章（任意）。
   // NOTE: 外部URLのみで投稿可能にするため任意とする。
   content?: string;
-  // 関連URL（任意・255文字以内・http/https）。
-  externalUrl?: string;
+  // 関連URL一覧（任意・各要素255文字以内・http/https）。
+  externalUrls?: string[];
   // 画像オブジェクトキーの一覧（任意）。
   imageObjectKeys?: string[];
   // PDF オブジェクトキーの一覧（任意・各要素255文字以内）。
@@ -23,8 +23,16 @@ export type CreateReportRequest = {
 
 // レポート作成エンドポイントのレスポンス DTO。
 export type CreateReportResponse = {
-  // 生成されたレポートの UUID。
-  id: string;
+  // 生成されたレポート ID。
+  reportId: string;
   // レコード作成日時(RFC3339)。
   createdAt: string;
+};
+
+// レポート作成 API のエラーレスポンスボディ DTO。
+export type CreateReportErrorBody = {
+  error: {
+    code: string;
+    message: string;
+  };
 };
